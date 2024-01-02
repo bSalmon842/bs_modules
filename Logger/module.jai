@@ -3,11 +3,8 @@ Module: BS842 Logger
 File: module.jai
 Author: Brock Salmon
 Created: 26NOV2023
-Last Edit: 01JAN2024
+Last Edit: 02JAN2024
 */
-
-// TODO: Think about how to format the calling location in the log
-// TODO: Logs on the same minute are overwriting text instead of appending
 
 #module_parameters(IS_DEV := false);
 
@@ -21,6 +18,8 @@ Log_Type :: enum {
 }
 
 Log_Filename_Flags :: enum_flags u8 {
+    FULL_TIMESTAMP :: 0xFC;
+    
     YEAR   :: 0x80;
     MONTH  :: 0x40;
     DAY    :: 0x20;
@@ -56,7 +55,15 @@ make_log_file :: (programName : string, filenameFlags : Log_Filename_Flags, flag
     file, success := file_open(builder_to_string(*filename), for_writing=true, keep_existing_content=true);
     if success {
         LOG_FILE = file;
-        log(.SUCCESS, "Created Log File");
+        file_seek(LOG_FILE, 0, .END);
+        // Write a separator, we always want as much timestamp data as possible, but check the passed in filename flags for whether to use 12 hr clock format and/or UTC
+        separatorTimestamp := tprint("===== Opened Log File at % =======================================================\n", make_separator_timestamp((flags & .USE_12_HR) | (flags & .USE_UTC)));
+        separatorBorder := copy_temporary_string(separatorTimestamp);
+        for 0 .. separatorBorder.count-1 if separatorBorder.data[it] != #char "=" then separatorBorder.data[it] = #char "=";
+        separatorBorder.data[separatorBorder.count-1] = #char "\n";
+        file_write(*LOG_FILE, separatorBorder);
+        file_write(*LOG_FILE, separatorTimestamp);
+        file_write(*LOG_FILE, separatorBorder);
     } else {
         assert(false, "Failed to create log file.");
     }
@@ -108,6 +115,26 @@ LOG_FILE : File;
 TIMESTAMP_12HR      : bool;
 TIMESTAMP_UTC       : bool;
 TIMESTAMP_INCL_DATE : bool;
+
+make_separator_timestamp :: (flags : Log_Flags) -> string {
+    usingUTC := cast(bool) (flags & .USE_UTC);
+    dt := to_calendar(current_time_consensus(), ifx usingUTC then .UTC else .LOCAL);
+    
+    using12Hr := cast(bool) (flags & .USE_12_HR);
+    hour := dt.hour;
+    meridiem := "";
+    if using12Hr {
+        if hour > 12 {
+            hour -= 12;
+            meridiem = "PM ";
+        } else {
+            meridiem = "AM ";
+        }
+    }
+    
+    return tprint("%/%/% %:%:% %", dt.year, formatInt(dt.month_starting_at_0 + 1, minimum_digits=2), formatInt(dt.day_of_month_starting_at_0 + 1, minimum_digits=2),
+                                                  formatInt(hour, minimum_digits=2), formatInt(dt.minute, minimum_digits=2), formatInt(dt.second, minimum_digits=2), meridiem);
+}
 
 make_filename_timestamp :: (flags : Log_Filename_Flags) -> string {
     timestamp : String_Builder;
