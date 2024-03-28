@@ -1,0 +1,10 @@
+=== 02JAN2024 ========================================
+- Fixed log files overwriting instead of appending when made with same name
+- Added separator with custom timestamp based of Log_Flags for appended log files
+
+=== 01JAN2024 ========================================
+- Switched from using get_system_time() to instead use Calendar_Time from Apollo_Time.
+- Added bit flag parameter for changing filename timestamp options.
+- Added support for UTC and 12hr clock in filename title.
+- Added filename and line number of logging call to log output.
+- Added support for UTC and 12hr clock to log timestamps.
