@@ -3707,6 +3707,8 @@ ImplWin32_InitForOpenGL :: (hwnd: *void) -> bool #foreign imgui "?ImGui_ImplWin3
 ImplWin32_Shutdown :: () -> void #foreign imgui "?ImGui_ImplWin32_Shutdown@@YAXXZ";
 ImplWin32_NewFrame :: () -> void #foreign imgui "?ImGui_ImplWin32_NewFrame@@YAXXZ";
 
+ImplWin32_WndProcHandler :: (hWnd: HWND, msg: u32, wParam: WPARAM, lParam: LPARAM) -> LRESULT #foreign imgui "?ImGui_ImplWin32_WndProcHandler@@YA_JPEAUHWND__@@I_K_J@Z";
+
 // DPI-related helpers (optional)
 // - Use to enable DPI awareness without having to create an application manifest.
 // - Your own app may already do this via a manifest or explicit calls. This is mostly useful for our examples/ apps.
@@ -3723,6 +3725,7 @@ ImplWin32_GetDpiScaleForMonitor :: (monitor: *void) -> float #foreign imgui "?Im
 
 imgui :: #library "windows/ImGui";
 #import "Vulkan_1_3";
+#import "Windows";
 
 #if OS == .MACOS    imgui :: #library "macos/ImGui";
 #if OS == .LINUX    imgui :: #library "linux/ImGui";
