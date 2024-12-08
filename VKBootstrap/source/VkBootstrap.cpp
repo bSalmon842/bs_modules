@@ -32,6 +32,7 @@
 
 #include <mutex>
 #include <algorithm>
+#include <iterator>
 
 namespace vkb {
 
@@ -534,8 +535,7 @@ SystemInfo::SystemInfo() {
         auto layer_extensions_ret = detail::get_vector<VkExtensionProperties>(
             layer_extensions, detail::vulkan_functions().fp_vkEnumerateInstanceExtensionProperties, layer.layerName);
         if (layer_extensions_ret == VK_SUCCESS) {
-            this->available_extensions.insert(
-                this->available_extensions.end(), layer_extensions.begin(), layer_extensions.end());
+            std::copy(layer_extensions.begin(), layer_extensions.end(), std::back_inserter(this->available_extensions));
             for (auto& ext : layer_extensions) {
                 if (strcmp(ext.extensionName, VK_EXT_DEBUG_UTILS_EXTENSION_NAME) == 0) {
                     debug_utils_available = true;
@@ -1051,7 +1051,10 @@ bool supports_features(const VkPhysicalDeviceFeatures& supported,
 // Finds the first queue which supports the desired operations. Returns QUEUE_INDEX_MAX_VALUE if none is found
 uint32_t get_first_queue_index(std::vector<VkQueueFamilyProperties> const& families, VkQueueFlags desired_flags) {
     for (uint32_t i = 0; i < static_cast<uint32_t>(families.size()); i++) {
-        if ((families[i].queueFlags & desired_flags) == desired_flags) return i;
+        auto flags = families[i].queueFlags;
+        if ((flags & desired_flags) == desired_flags) {
+            return i;
+        }
     }
     return QUEUE_INDEX_MAX_VALUE;
 }
@@ -1121,7 +1124,7 @@ PhysicalDevice PhysicalDeviceSelector::populate_device_details(
         available_extensions, detail::vulkan_functions().fp_vkEnumerateDeviceExtensionProperties, vk_phys_device, nullptr);
     if (available_extensions_ret != VK_SUCCESS) return physical_device;
     for (const auto& ext : available_extensions) {
-        physical_device.available_extensions.push_back(&ext.extensionName[0]);
+        physical_device.available_extensions.push_back(std::string(ext.extensionName, 256));
     }
 
     physical_device.properties2_ext_enabled = instance_info.properties2_ext_enabled;
@@ -1645,7 +1648,7 @@ Result<Device> DeviceBuilder::build() const {
 
     std::vector<CustomQueueDescription> queue_descriptions;
     queue_descriptions.insert(queue_descriptions.end(), info.queue_descriptions.begin(), info.queue_descriptions.end());
-
+    
     if (queue_descriptions.empty()) {
         for (uint32_t i = 0; i < physical_device.queue_families.size(); i++) {
             queue_descriptions.emplace_back(i, std::vector<float>{ 1.0f });
@@ -1719,7 +1722,7 @@ Result<Device> DeviceBuilder::build() const {
     device_create_info.enabledExtensionCount = static_cast<uint32_t>(extensions_to_enable.size());
     device_create_info.ppEnabledExtensionNames = extensions_to_enable.data();
 
-    Device device;
+    Device device = {};
 
     VkResult res = detail::vulkan_functions().fp_vkCreateDevice(
         physical_device.physical_device, &device_create_info, info.allocation_callbacks, &device.device);
@@ -1727,7 +1730,27 @@ Result<Device> DeviceBuilder::build() const {
         return { DeviceError::failed_create_device, res };
     }
 
-    device.physical_device = physical_device;
+    printf("SHIT1: %zu\n", device.physical_device.available_extensions.size());
+    printf("SHIT2: %zu\n", physical_device.available_extensions.size());
+    
+    auto copy_phys_device = [](PhysicalDevice& dest, const PhysicalDevice& src) {
+        dest.name                         = src.name;
+        dest.physical_device              = src.physical_device;
+        dest.surface                      = src.surface;
+        dest.features                     = src.features;
+        dest.properties                   = src.properties;
+        dest.memory_properties            = src.memory_properties;
+        dest.instance_version             = src.instance_version;
+        dest.extensions_to_enable         = src.extensions_to_enable;
+        // dest.available_extensions         = src.available_extensions; This breaks everything for some reason
+        dest.queue_families               = src.queue_families;
+        dest.extended_features_chain      = src.extended_features_chain;
+        dest.defer_surface_initialization = src.defer_surface_initialization;
+        dest.properties2_ext_enabled      = src.properties2_ext_enabled;
+        dest.suitable                     = src.suitable;
+    };
+    
+    copy_phys_device(device.physical_device, physical_device);
     device.surface = physical_device.surface;
     device.queue_families = physical_device.queue_families;
     device.allocation_callbacks = info.allocation_callbacks;
@@ -1875,7 +1898,8 @@ SwapchainBuilder::SwapchainBuilder(Device const& device) {
     info.instance_version = device.instance_version;
     auto present = device.get_queue_index(QueueType::present);
     auto graphics = device.get_queue_index(QueueType::graphics);
-    assert(graphics.has_value() && present.has_value() && "Graphics and Present queue indexes must be valid");
+    assert(graphics.has_value() && "Graphics queue index must be valid");
+    assert(present.has_value() && "Present queue index must be valid");
     info.graphics_queue_index = present.value();
     info.present_queue_index = graphics.value();
     info.allocation_callbacks = device.allocation_callbacks;
@@ -1886,10 +1910,23 @@ SwapchainBuilder::SwapchainBuilder(Device const& device, VkSurfaceKHR const surf
     info.surface = surface;
     info.instance_version = device.instance_version;
     Device temp_device = device;
+    temp_device.queue_families = detail::get_vector_noerror<VkQueueFamilyProperties>(
+        detail::vulkan_functions().fp_vkGetPhysicalDeviceQueueFamilyProperties, info.physical_device);
     temp_device.surface = surface;
     auto present = temp_device.get_queue_index(QueueType::present);
     auto graphics = temp_device.get_queue_index(QueueType::graphics);
-    assert(graphics.has_value() && present.has_value() && "Graphics and Present queue indexes must be valid");
+    if (!graphics.has_value()) {
+        printf("Families: %zu\n", temp_device.queue_families.size());
+        for (const auto& family : temp_device.queue_families) {
+            printf("{\n");
+            printf("\tQueue Flags: %u\n", family.queueFlags);
+            printf("\tQueue Count: %u\n", family.queueCount);
+            printf("\tTime Valid Bits: %u\n", family.timestampValidBits);
+            printf("}\n\n");
+        }
+        assert(graphics.has_value() && "Graphics queue index must be valid");    
+    }
+    assert(present.has_value() && "Present queue index must be valid");
     info.graphics_queue_index = graphics.value();
     info.present_queue_index = present.value();
     info.allocation_callbacks = device.allocation_callbacks;

@@ -14,7 +14,7 @@ vulkan_include_path            :: "C:/VulkanSDK/1.3.268.0/Include";
 #if COMPILE_TIME {
     #run,stallable {
         #if COMPILE_LIBRARY {
-            build_cpp_dynamic_lib(vulkan_bootstrap_lib_name, ..vulkan_bootstrap_cpp_locations, extra=.[tprint("/I%", vulkan_include_path), "/std:c++17"], library_files=.["C:/VulkanSDK/1.3.268.0/Lib/vulkan-1.lib"]);
+            build_cpp_dynamic_lib(vulkan_bootstrap_lib_name, ..vulkan_bootstrap_cpp_locations, debug=true, extra=.[tprint("/I%", vulkan_include_path), "/std:c++20"], library_files=.["C:/work/bs_modules/Vulkan_1_3/win/vulkan-1.lib"]);
         }
         
         set_build_options_dc(.{do_output = false});

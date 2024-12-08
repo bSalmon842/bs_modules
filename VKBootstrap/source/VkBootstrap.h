@@ -24,7 +24,7 @@
 #include <string>
 #include <system_error>
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan_core.h>
 
 #include "VkBootstrapDispatch.h"
 
@@ -510,7 +510,7 @@ void destroy_debug_utils_messenger(
 class PhysicalDeviceSelector;
 class DeviceBuilder;
 
-struct PhysicalDevice {
+struct PhysicalDevice {    
     std::string name;
     VkPhysicalDevice physical_device = VK_NULL_HANDLE;
     VkSurfaceKHR surface = VK_NULL_HANDLE;
@@ -569,7 +569,6 @@ struct PhysicalDevice {
     // in places where VkPhysicalDevice would have been used.
     EXPORT operator VkPhysicalDevice() const;
 
-    private:
     uint32_t instance_version = VKB_VK_API_VERSION_1_0;
     std::vector<std::string> extensions_to_enable;
     std::vector<std::string> available_extensions;
@@ -580,6 +579,7 @@ struct PhysicalDevice {
     bool properties2_ext_enabled = false;
     enum class Suitable { yes, partial, no };
     Suitable suitable = Suitable::yes;
+    private:
     friend class PhysicalDeviceSelector;
     friend class DeviceBuilder;
 

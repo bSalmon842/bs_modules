@@ -400,6 +400,7 @@ namespace VkbDeviceBuilderFunctions {
 _TYPEDEF(VkbSwapchain);
 
 namespace VkbSwapchainFunctions {
+    EXPORT VkSwapchainKHR get_vk_swapchain(VkbSwapchain swapchain);
     EXPORT uint32_t get_image_count(VkbSwapchain swapchain);
     EXPORT VkFormat get_image_format(VkbSwapchain swapchain);
     EXPORT VkColorSpaceKHR get_color_space(VkbSwapchain swapchain);

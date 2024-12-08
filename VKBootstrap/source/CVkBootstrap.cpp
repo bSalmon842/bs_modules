@@ -37,7 +37,7 @@ namespace VkbSystemInfoFunctions {
         
         if (system_info_result.has_value()) {
             *result = (VkbSystemInfo)malloc(sizeof(vkb::SystemInfo));
-            memcpy(*result, &std::move(system_info_result), sizeof(vkb::SystemInfo));
+            memmove(*result, &system_info_result, sizeof(vkb::SystemInfo));
         } else {
             error = (VkbInstanceError)(system_info_result.error().value() + 1);
         }
@@ -130,7 +130,7 @@ namespace VkbInstanceBuilderFunctions {
         vkb::InstanceBuilder builder (fp_vkGetInstanceProcAddr);
         
         auto* result = (VkbInstanceBuilder)malloc(sizeof(vkb::InstanceBuilder));
-        memcpy(result, &std::move(builder), sizeof(vkb::InstanceBuilder));
+        memmove(result, &builder, sizeof(vkb::InstanceBuilder));
         
         return result;        
     }
@@ -153,7 +153,7 @@ namespace VkbInstanceBuilderFunctions {
         
         if (instance_result.has_value()) {
             *result = (VkbInstance)malloc(sizeof(vkb::Instance));
-            memcpy(*result, &std::move(instance_result), sizeof(vkb::Instance));
+            memmove(*result, &instance_result, sizeof(vkb::Instance));
         } else {
             error = (VkbInstanceError)(instance_result.error().value() + 1);
         }
@@ -477,7 +477,7 @@ namespace VkbPhysicalDeviceSelectorFunctions {
         
         auto* result = (VkbPhysicalDeviceSelector)malloc(sizeof(vkb::PhysicalDeviceSelector));
         
-        memcpy(result, &std::move(selector), sizeof(vkb::PhysicalDeviceSelector));
+        memmove(result, &selector, sizeof(vkb::PhysicalDeviceSelector));
         
         return result;
     }
@@ -492,7 +492,7 @@ namespace VkbPhysicalDeviceSelectorFunctions {
     
     VkbPhysicalDevice copy_vkb_physical_device(vkb::Result<vkb::PhysicalDevice>&& pdevice) {
         auto result = (VkbPhysicalDevice)malloc(sizeof(vkb::PhysicalDevice));
-        memcpy(result, &std::move(pdevice), sizeof(vkb::PhysicalDevice));
+        memmove(result, &pdevice, sizeof(vkb::PhysicalDevice));
         return result;
     }
     
@@ -775,7 +775,7 @@ namespace VkbDeviceBuilderFunctions {
         
         auto result = (VkbDeviceBuilder)malloc(sizeof(vkb::DeviceBuilder));
         
-        memcpy(result, &std::move(builder), sizeof(vkb::DeviceBuilder));
+        memmove(result, &builder, sizeof(vkb::DeviceBuilder));
         
         return result;
     }
@@ -798,7 +798,7 @@ namespace VkbDeviceBuilderFunctions {
         
         if (device_result.has_value()) {
             *result = (VkbDevice)malloc(sizeof(vkb::Device));
-            memcpy(*result, &std::move(device_result), sizeof(vkb::Device));
+            memmove(*result, &device_result, sizeof(vkb::Device));
         } else {
             error = (VkbDeviceError)(device_result.error().value() + 1);
         }
@@ -820,6 +820,12 @@ namespace VkbDeviceBuilderFunctions {
 } // namespace VkbDeviceBuilderFunctions
 
 namespace VkbSwapchainFunctions {
+    EXPORT VkSwapchainKHR get_vk_swapchain(VkbSwapchain swapchain) {
+        auto* vkb_swapchain = (vkb::Swapchain*)swapchain;
+        
+        return vkb_swapchain->swapchain;
+    }
+    
     EXPORT uint32_t get_image_count(VkbSwapchain swapchain) {
         auto* vkb_swapchain = (vkb::Swapchain*)swapchain;
         
@@ -946,7 +952,7 @@ namespace VkbSwapchainBuilderFunctions {
         
         auto* result = (VkbSwapchainBuilder)malloc(sizeof(vkb::SwapchainBuilder));
         
-        memcpy(result, &std::move(builder), sizeof(vkb::SwapchainBuilder));
+        memmove(result, &builder, sizeof(vkb::SwapchainBuilder));
         
         return result;
     }
@@ -968,7 +974,7 @@ namespace VkbSwapchainBuilderFunctions {
         
         if (swapchain_result.has_value()) {
             *result = (VkbSwapchain)malloc(sizeof(vkb::Swapchain));
-            memcpy(*result, &std::move(swapchain_result), sizeof(vkb::Swapchain));
+            memmove(*result, &swapchain_result, sizeof(vkb::Swapchain));
         } else {
             error = (VkbSwapchainError)(swapchain_result.error().value() + 1);
         }

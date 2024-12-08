@@ -541,6 +541,7 @@ Swapchain_T :: struct {}
 Swapchain :: *Swapchain_T;
 
 // VkbSwapchainFunctions
+    get_vk_swapchain :: (swapchain: Swapchain) -> VkSwapchainKHR #foreign libvkbootstrap "?get_vk_swapchain@VkbSwapchainFunctions@@YAPEAUVkSwapchainKHR_T@@PEAUVkbSwapchain_T@@@Z";
     get_image_count :: (swapchain: Swapchain) -> u32 #foreign libvkbootstrap "?get_image_count@VkbSwapchainFunctions@@YAIPEAUVkbSwapchain_T@@@Z";
     get_image_format :: (swapchain: Swapchain) -> VkFormat #foreign libvkbootstrap "?get_image_format@VkbSwapchainFunctions@@YA?AW4VkFormat@@PEAUVkbSwapchain_T@@@Z";
     get_color_space :: (swapchain: Swapchain) -> VkColorSpaceKHR #foreign libvkbootstrap "?get_color_space@VkbSwapchainFunctions@@YA?AW4VkColorSpaceKHR@@PEAUVkbSwapchain_T@@@Z";
@@ -607,7 +608,7 @@ SwapchainBuilder :: *SwapchainBuilder_T;
 
     build :: (builder: SwapchainBuilder, result: *Swapchain) -> SwapchainError #foreign libvkbootstrap "?build@VkbSwapchainBuilderFunctions@@YA?AW4VkbSwapchainError@@PEAUVkbSwapchainBuilder_T@@PEAPEAUVkbSwapchain_T@@@Z";
     build :: inline (builder: SwapchainBuilder) -> Swapchain, SwapchainError #no_context {
-        result: VkbSwapchain = ---;
+        result: Swapchain = ---;
         error := build(builder, *result);
         return result, error;
     }
