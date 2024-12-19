@@ -8,6 +8,13 @@ Last Edit: 16DEC2024
 
 QUEUE_INDEX_MAX_VALUE : u32 : 65536;
 
+QueueType :: enum {
+    Present;
+    Graphics;
+    Compute;
+    Transfer;
+}
+
 get_dedicated_queue_index :: (families : [..] VkQueueFamilyProperties, desiredFlags : VkQueueFlags, undesiredFlags : VkQueueFlags) -> u32 {
     for families {
         if (it.queueFlags & desiredFlags) == desiredFlags && (it.queueFlags & .GRAPHICS_BIT) == 0 && (it.queueFlags & undesiredFlags) == 0 {
