@@ -25,7 +25,7 @@ default_debug_callback :: (messageSeverity : VkDebugUtilsMessageSeverityFlagBits
     return VK_FALSE; // Applications must return false here
 }
 
-setup_pNext_chain :: (chainBase : $T, structures : *[..] *VkBaseOutStructure) {
+setup_pNext_chain :: (chainBase : *$T, structures : *[..] *VkBaseOutStructure) {
     if structures.*.count == 0 then return;
     for 1 .. structures.count-1 {
         structures.*[it-1].pNext = structures.*[it];
@@ -40,9 +40,12 @@ cleanup_cstr_array :: (arr : [..] *u8) {
     }
 }
 
+#load "device.jai";
 #load "instance.jai";
 #load "physical_device.jai";
 #load "queues.jai";
+#load "swapchain.jai";
+#load "swapchain_misc.jai";
 #load "system_info.jai";
 
 #scope_file

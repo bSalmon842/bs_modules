@@ -26,8 +26,8 @@ Instance :: struct {
 
     headless              : bool = false;
     properties2EXTEnabled : bool = false;
-    instanceVersion       : u32  = VK_API_VERSION_1_3;
-    apiVersion            : u32  = VK_API_VERSION_1_3;
+    instanceVersion       : u32  = VK_API_VERSION_1_0;
+    apiVersion            : u32  = VK_API_VERSION_1_0;
 };
 
 InstanceBuilder :: struct {
@@ -37,8 +37,8 @@ InstanceBuilder :: struct {
     appVersion             : u32 = 0;
     engineVersion          : u32 = 0;
     minimumInstanceVersion : u32 = 0;
-    requiredAPIVersion     : u32 = VK_API_VERSION_1_3;
-    desiredAPIVersion      : u32 = VK_API_VERSION_1_3;
+    requiredAPIVersion     : u32 = VK_API_VERSION_1_0;
+    desiredAPIVersion      : u32 = VK_API_VERSION_1_0;
 
     // VkInstanceCreateInfo
     layers        : [..] string;
