@@ -6,6 +6,8 @@ Created: 14DEC2024
 Last Edit: 14DEC2024
 */
 
+log_instance :: (type : Log_Type, s : string) { log_vkb(type, "INSTANCE", s); }
+
 InstanceError :: enum {
     Success;
     Vulkan_Unavailable;

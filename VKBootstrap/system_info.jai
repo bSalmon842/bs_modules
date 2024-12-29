@@ -6,6 +6,8 @@ Created: 14DEC2024
 Last Edit: 14DEC2024
 */
 
+log_systeminfo :: (type : Log_Type, s : string) { log_vkb(type, "SYSTEMINFO", s); }
+
 SystemInfo :: struct {
     availableLayers     : [..] VkLayerProperties;
     availableExtensions : [..] VkExtensionProperties;
@@ -16,55 +18,35 @@ SystemInfo :: struct {
 make_system_info :: () -> SystemInfo {
     systemInfo : SystemInfo;
     
-    {
-        layerCount : u32;
-        if vkEnumerateInstanceLayerProperties(*layerCount, null) == .SUCCESS {
-            array_resize(*systemInfo.availableLayers, layerCount);
-            vkEnumerateInstanceLayerProperties(*layerCount, systemInfo.availableLayers.data);
-        }
-        
-        for systemInfo.availableLayers {
-            if compare(cast(string) it.layerName, VALIDATION_LAYER_NAME) == 0 {
-                systemInfo.validationLayersAvailable = true;
-                break;
-            }
+    systemInfo.availableLayers = get_vk_array(VkLayerProperties, "vkEnumerateInstanceLayerProperties", "*arrSize, arr.data", log_systeminfo);
+    for systemInfo.availableLayers {
+        if compare(cast(string) it.layerName, VALIDATION_LAYER_NAME) == 0 {
+            systemInfo.validationLayersAvailable = true;
+            break;
         }
     }
-    
-    {
-        extCount : u32;
-        if vkEnumerateInstanceExtensionProperties(null, *extCount, null) == .SUCCESS {
-            array_resize(*systemInfo.availableExtensions, extCount);
-            vkEnumerateInstanceExtensionProperties(null, *extCount, systemInfo.availableExtensions.data);
-        }
-        
-        for systemInfo.availableExtensions {
-            if compare(cast(string) it.extensionName, VK_EXT_DEBUG_UTILS_EXTENSION_NAME) == 0 {
-                systemInfo.debugUtilsAvailable = true;
-                break;
-            }
+
+    systemInfo.availableExtensions = get_vk_array(VkExtensionProperties, "vkEnumerateInstanceExtensionProperties", "null, *arrSize, arr.data", log_systeminfo);
+    for systemInfo.availableExtensions {
+        if compare(cast(string) it.extensionName, VK_EXT_DEBUG_UTILS_EXTENSION_NAME) == 0 {
+            systemInfo.debugUtilsAvailable = true;
+            break;
         }
     }
     
     for systemInfo.availableLayers {
-        layerExtensions : [..] VkExtensionProperties;
-        extCount : u32;
-        if vkEnumerateInstanceExtensionProperties(it.layerName.data, *extCount, null) == .SUCCESS {
-            array_resize(*layerExtensions, extCount);
-            vkEnumerateInstanceExtensionProperties(it.layerName.data, *extCount, layerExtensions.data);
-            
-            array_add(*systemInfo.availableExtensions, ..layerExtensions);
-            
-            if !systemInfo.debugUtilsAvailable {
-                for layerExtensions {
-                    if compare(cast(string) it.extensionName, VK_EXT_DEBUG_UTILS_EXTENSION_NAME) == 0 {
-                        systemInfo.debugUtilsAvailable = true;
-                        break;
-                    }
+        layerExtensions := get_vk_array(VkExtensionProperties, "vkEnumerateInstanceExtensionProperties", "xx args[0].value_pointer, *arrSize, arr.data", log_systeminfo, it.layerName.data);
+        
+        array_add(*systemInfo.availableExtensions, ..layerExtensions);
+        
+        if !systemInfo.debugUtilsAvailable {
+            for layerExtensions {
+                if compare(cast(string) it.extensionName, VK_EXT_DEBUG_UTILS_EXTENSION_NAME) == 0 {
+                    systemInfo.debugUtilsAvailable = true;
+                    break;
                 }
             }
         }
-        
     }
     
     return systemInfo;
