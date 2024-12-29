@@ -37,10 +37,17 @@ Log_Flags :: enum_flags u8 {
     USE_UTC                :: 0x1;
 }
 
-make_log_file :: (programName : string, filenameFlags : Log_Filename_Flags = .FULL_TIMESTAMP, flags : Log_Flags = 0) {
+set_log_file :: (file : File, time_12hr : bool, time_utc : bool, time_inclDate : bool) {
+    LOG_FILE = file;
+    TIMESTAMP_12HR = time_12hr;
+    TIMESTAMP_UTC = time_utc;
+    TIMESTAMP_INCL_DATE = time_inclDate;
+}
+
+make_log_file :: (programName : string, filenameFlags : Log_Filename_Flags = .FULL_TIMESTAMP, flags : Log_Flags = 0) -> File, bool, bool, bool {
     if LOG_FILE.handle {
         log(.ERROR, "A log file is already opened for this program.");
-        return;
+        return .{}, false, false, false;
     }
 
     TIMESTAMP_INCL_DATE = cast(bool) (flags & .SHOW_DATE_IN_TIMESTAMP);
@@ -67,6 +74,8 @@ make_log_file :: (programName : string, filenameFlags : Log_Filename_Flags = .FU
     } else {
         assert(false, "Failed to create log file.");
     }
+    
+    return LOG_FILE, TIMESTAMP_12HR, TIMESTAMP_UTC, TIMESTAMP_INCL_DATE;
 }
 
 log :: (type : Log_Type, s : string, callLoc := #caller_location) {
