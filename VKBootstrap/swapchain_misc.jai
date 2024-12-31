@@ -3,7 +3,6 @@ Module: BS842 Vk Bootstrap
 File: swapchain_misc.jai
 Author: Brock Salmon
 Created: 21DEC2024
-Last Edit: 21DEC2024
 */
 
 SurfaceSupportError :: enum {

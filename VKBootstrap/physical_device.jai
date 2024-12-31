@@ -3,7 +3,6 @@ Module: BS842 Vk Bootstrap
 File: physical_device.jai
 Author: Brock Salmon
 Created: 15DEC2024
-Last Edit: 19DEC2024
 */
 
 PhysicalDeviceError :: enum {

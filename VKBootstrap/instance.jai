@@ -3,10 +3,7 @@ Module: BS842 Vk Bootstrap
 File: instance.jai
 Author: Brock Salmon
 Created: 14DEC2024
-Last Edit: 14DEC2024
 */
-
-log_instance :: (type : Log_Type, s : string) { log_vkb(type, "INSTANCE", s); }
 
 InstanceError :: enum {
     Success;

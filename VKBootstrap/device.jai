@@ -3,7 +3,6 @@ Module: BS842 Vk Bootstrap
 File: device.jai
 Author: Brock Salmon
 Created: 19DEC2024
-Last Edit: 20DEC2024
 */
 
 DeviceError :: enum {

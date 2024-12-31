@@ -3,7 +3,6 @@ Module: BS842 Vk Bootstrap
 File: swapchain.jai
 Author: Brock Salmon
 Created: 20DEC2024
-Last Edit: 21DEC2024
 */
 
 SwapchainError :: enum {

@@ -3,7 +3,6 @@ Module: BS842 Vk Bootstrap
 File: module.jai
 Author: Brock Salmon
 Created: 03DEC2024
-Last Edit: 18DEC2024
 */
 
 #module_parameters(DEBUG_OUTPUT := false, VERBOSE := false);
@@ -17,8 +16,7 @@ PORTABILITY_EXT_NAME :: "VK_KHR_portability_subset";
 default_debug_callback :: (messageSeverity : VkDebugUtilsMessageSeverityFlagBitsEXT,
                            messageType : VkDebugUtilsMessageTypeFlagsEXT,
                            pCallbackData : *VkDebugUtilsMessengerCallbackDataEXT, *void) -> VkBool32 #c_call {
-    callback_context := Context.{};
-    push_context callback_context {
+    push_context {
         ms := enum_value_to_name(messageSeverity);
         mt := enum_value_to_name(messageType);
         print("[%s: %s]\n%s\n", ms, mt, pCallbackData.pMessage);
@@ -44,25 +42,6 @@ cleanup_cstr_array :: (arr : [..] *u8) {
 
 get_version_string :: (version : u32) -> string {
     return tprint("%.%.%", VK_VERSION_MAJOR(version), VK_VERSION_MINOR(version), VK_VERSION_PATCH(version));
-}
-
-get_vk_array :: ($T : Type, funcSig : string, funcArgs : string, logFunc : (Log_Type, string), args : ..Any) -> [..] T #expand {
-    FUNC_STRING :: #run tprint("%(%);", funcSig, funcArgs);
-    
-    arrSize : u32;
-    arr : [..] T;
-    oldData := arr.data;
-    arr.data = null;
-    result : VkResult = #insert FUNC_STRING;
-    if result == .SUCCESS {
-        arr.data = oldData;
-        array_resize(*arr, arrSize);
-        result = #insert FUNC_STRING;
-    }
-    
-    check_vk(result, logFunc, tprint("% succeeded", funcSig), tprint("% failed", funcSig));
-    
-    return arr;
 }
 
 log_vkb :: (type : Log_Type, t : string, s : string) {

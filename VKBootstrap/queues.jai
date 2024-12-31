@@ -3,7 +3,6 @@ Module: BS842 Vk Bootstrap
 File: queues.jai
 Author: Brock Salmon
 Created: 16DEC2024
-Last Edit: 16DEC2024
 */
 
 QUEUE_INDEX_MAX_VALUE : u32 : 65536;
