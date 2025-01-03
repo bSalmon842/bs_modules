@@ -46,7 +46,8 @@ get_images :: (swapchain : Swapchain) -> [..] VkImage, SwapchainError {
 get_image_views :: (swapchain : Swapchain, pNext : *void = null) -> [..] VkImageView, SwapchainError {
     images, getImagesError := get_images(swapchain);
     if getImagesError {
-        return .[], getImagesError;
+        errReturn : [..] VkImageView;
+        return errReturn, getImagesError;
     }
     
     alreadyContainsImageViewUsage := false;

@@ -139,7 +139,7 @@ vulkan_memory_allocator_visitor :: (decl: *Declaration, parent_decl: *Declaratio
 #import "BuildCpp";
 
 VMA_FOOTER :: #string DONE
-#import "Vulkan_1_3";
+#import "Vulkan";
 
 #if OS == .WINDOWS {
     libvma :: #library "VMA";
@@ -148,5 +148,4 @@ VMA_FOOTER :: #string DONE
 } else {
     #assert(false);
 }
-
 DONE

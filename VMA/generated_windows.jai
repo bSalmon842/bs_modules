@@ -1733,10 +1733,9 @@ vmaFreeStatsString :: (allocator: VmaAllocator, pStatsString: *u8) -> void #fore
 #import "Vulkan_1_3";
 
 #if OS == .WINDOWS {
-    libvma :: #library,no_dll "VMA";
+    libvma :: #library "VMA";
 } else #if OS == .LINUX {
-    libvma :: #library,no_dll "VMA";
+    libvma :: #library "VMA";
 } else {
     #assert(false);
 }
-
