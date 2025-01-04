@@ -295,6 +295,7 @@ imgui_get_function_arg_for_printing :: (func: *Function, type: *Function_Type, m
 FOOTER :: #string END
 #import "Vulkan_1_3";
 
+#if OS == .WINDOWS  #import "Windows";
 #if OS == .MACOS    imgui :: #library "macos/ImGui";
 #if OS == .LINUX    imgui :: #library "linux/ImGui";
 

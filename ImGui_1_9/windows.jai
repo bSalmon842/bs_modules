@@ -2577,10 +2577,10 @@ TableSortSpecs :: struct {
 
 // Sorting specification for one column of a table (sizeof == 12 bytes)
 TableColumnSortSpecs :: struct {
-    ColumnUserID:  ID; // User id of the column (if specified by a TableSetupColumn() call)
-    ColumnIndex:   ImS16; // Index of the column
-    SortOrder:     ImS16; // Index within parent ImGuiTableSortSpecs (always stored in order starting from 0, tables sorted on a single criteria will always have a 0 here)
-    SortDirection: u8; // ImGuiSortDirection_Ascending or ImGuiSortDirection_Descending
+    ColumnUserID:   ID; // User id of the column (if specified by a TableSetupColumn() call)
+    ColumnIndex:    ImS16; // Index of the column
+    SortOrder:      ImS16; // Index within parent ImGuiTableSortSpecs (always stored in order starting from 0, tables sorted on a single criteria will always have a 0 here)
+    SortDirection_: SortDirection; /* 8 bits */ // ImGuiSortDirection_Ascending or ImGuiSortDirection_Descending
 }
 
 //-----------------------------------------------------------------------------
@@ -3328,18 +3328,22 @@ ImFontConfig :: struct {
 // Hold rendering data for one glyph.
 // (Note: some language parsers may fail to convert the 31+1 bitfield members, in this case maybe drop store a single u32 or we can rework this)
 ImFontGlyph :: struct {
-    Colored:   u32; // Flag to indicate glyph is colored and should generally ignore tinting (make it usable with no shift on little-endian as this is used in loops)
-    #place Colored; /*bitfield 1*/ Visible:   u32; // Flag to indicate glyph has no visible pixels (e.g. space). Allow early out when rendering.
-    #place Colored; /*bitfield 2*/ Codepoint: u32; // 0x0000..0x10FFFF
-    AdvanceX:  float; // Distance to next character (= data from font + ImFontConfig::GlyphExtraSpacing.x baked in)
-    X0:        float; // Glyph corners
-    Y0:        float; // Glyph corners
-    X1:        float; // Glyph corners
-    Y1:        float; // Glyph corners
-    U0:        float; // Texture coordinates
-    V0:        float; // Texture coordinates
-    U1:        float; // Texture coordinates
-    V1:        float; // Texture coordinates
+    __bitfield: u32;
+    /* 
+        Colored: u32; /* 1 bits */ // Flag to indicate glyph is colored and should generally ignore tinting (make it usable with no shift on little-endian as this is used in loops)
+        Visible: u32; /* 1 bits */ // Flag to indicate glyph has no visible pixels (e.g. space). Allow early out when rendering.
+        Codepoint: u32; /* 30 bits */ // 0x0000..0x10FFFF;
+    */
+
+    AdvanceX:   float; // Distance to next character (= data from font + ImFontConfig::GlyphExtraSpacing.x baked in)
+    X0:         float; // Glyph corners
+    Y0:         float; // Glyph corners
+    X1:         float; // Glyph corners
+    Y1:         float; // Glyph corners
+    U0:         float; // Texture coordinates
+    V0:         float; // Texture coordinates
+    U1:         float; // Texture coordinates
+    V1:         float; // Texture coordinates
 }
 
 // Helper to build glyph ranges from text/string data. Feed your application strings/characters to it then call BuildRanges().
@@ -3725,8 +3729,8 @@ ImplWin32_GetDpiScaleForMonitor :: (monitor: *void) -> float #foreign imgui "?Im
 
 imgui :: #library "windows/ImGui";
 #import "Vulkan_1_3";
-#import "Windows";
 
+#if OS == .WINDOWS  #import "Windows";
 #if OS == .MACOS    imgui :: #library "macos/ImGui";
 #if OS == .LINUX    imgui :: #library "linux/ImGui";
 
