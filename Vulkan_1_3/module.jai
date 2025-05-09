@@ -62,6 +62,19 @@ VK_API_VERSION_PATCH   :: (version: u32) -> u32 { return version & 0xfff; }
     libvulkan :: #library "win/vulkan-1";
 } else #if OS == .LINUX {
     #load "generated_linux.jai";
+    #load "linux_extras.jai";
+
+    vkCreateXlibSurfaceKHR :: (instance: VkInstance, pCreateInfo: *VkXlibSurfaceCreateInfoKHR, pAllocator: *VkAllocationCallbacks, pSurface: *VkSurfaceKHR) -> VkResult #foreign libvulkan;
+    
+    #scope_file
+    libvulkan :: #system_library "libvulkan";
+} else #if OS == .ANDROID {
+    #load "generated_linux.jai";
+    #load "android_extras.jai";
+
+    vkCreateAndroidSurfaceKHR :: (instance: VkInstance, pCreateInfo: *VkAndroidSurfaceCreateInfoKHR, pAllocator: *VkAllocationCallbacks, pSurface: *VkSurfaceKHR) -> VkResult #foreign libvulkan;
+    
+    #scope_file
     libvulkan :: #system_library "libvulkan";
 }
 
