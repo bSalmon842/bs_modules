@@ -45,21 +45,26 @@ set_log_file :: (file : File, time_12hr : bool, time_utc : bool, time_inclDate :
 }
 
 make_log_file :: (programName : string, filenameFlags : Log_Filename_Flags = .FULL_TIMESTAMP, flags : Log_Flags = 0) -> File, bool, bool, bool {
-    if LOG_FILE.handle {
-        log(.ERROR, "A log file is already opened for this program.");
-        return .{}, false, false, false;
-    }
+    assert(!LOG_FILE.handle, "A log file is already opened for this program.");
 
     TIMESTAMP_INCL_DATE = cast(bool) (flags & .SHOW_DATE_IN_TIMESTAMP);
     TIMESTAMP_12HR = cast(bool) (flags & .USE_12_HR);
     TIMESTAMP_UTC = cast(bool) (flags & .USE_UTC);
 
-    logFolder := "logs";
-    make_directory_if_it_does_not_exist(logFolder);
+    logFolder := "./logs";
+    #if OS == .ANDROID {
+        logFolder = join(to_string(context.android_app.activity.externalDataPath), "/logs");
+    }
+    
+    if !make_directory_if_it_does_not_exist(logFolder) {
+        assert(false, "Failed to make logs folder");
+    }
 
     filename : String_Builder;
     print_to_builder(*filename, "%/%_%.log", logFolder, programName, make_filename_timestamp(filenameFlags));
-    file, success := file_open(builder_to_string(*filename), for_writing=true, keep_existing_content=true);
+    filenameString := builder_to_string(*filename);
+    print("Attempting to open log file at %\n", filenameString);
+    file, success := file_open(filenameString, for_writing=true, keep_existing_content=true);
     if success {
         LOG_FILE = file;
         file_seek(LOG_FILE, 0, .END);
@@ -116,7 +121,10 @@ log :: (type : Log_Type, s : string, callLoc := #caller_location) {
     print_to_builder(*logMsg, "% (%:%) %: %\n", timestamp, filename, callLoc.line_number, desig, s);
     file_write(*LOG_FILE, builder_to_string(*logMsg));
 
-    if type == .FATAL then assert(false);
+    if type == .FATAL {
+	file_close(*LOG_FILE);
+	assert(false);
+    }
 }
 
 #scope_file
@@ -199,6 +207,11 @@ make_filename_timestamp :: (flags : Log_Filename_Flags) -> string {
     return builder_to_string(*timestamp);
 }
 
+#scope_module
 #import "Basic";
 #import "File";
 #import "String";
+
+#if OS == .ANDROID {
+Android :: #import "Android";
+}
