@@ -6,11 +6,19 @@ vulkan_memory_allocator_lib_path     :: ".";
 
 #if COMPILE_TIME {
     #run,stallable {
-        build_cpp_dynamic_lib("VMA", vulkan_memory_allocator_cpp_location, extra=.["/I."], library_files=.["C:/VulkanSDK/1.3.268.0/Lib/vulkan-1.lib"]);
-        set_build_options_dc(.{do_output = false});
-        if !generate_bindings() {
-            compiler_set_workspace_status(.FAILED);
-        }
+	#if OS == .WINDOWS {
+            build_cpp_dynamic_lib("VMA", vulkan_memory_allocator_cpp_location, extra=.["/I."], library_files=.["C:/VulkanSDK/1.3.268.0/Lib/vulkan-1.lib"]);
+            set_build_options_dc(.{do_output = false});
+            if !generate_bindings() {
+		compiler_set_workspace_status(.FAILED);
+            }
+	} else #if OS == .LINUX {
+	    build_cpp_dynamic_lib("VMA", vulkan_memory_allocator_cpp_location);
+            set_build_options_dc(.{do_output = false});
+            if !generate_bindings() {
+		compiler_set_workspace_status(.FAILED);
+            }
+	}
     }
 } else {
     #import "System";
@@ -41,7 +49,7 @@ generate_bindings :: () -> bool {
             output_filename = "generated_windows.jai";        
         } else #if OS == .LINUX {
             array_add(*libnames, "VMA");
-            output_filename = "generated+linux.jai";
+            output_filename = "generated_linux.jai";
         } else #if OS == .MACOS {
             // @ToDo
             assert(false);
@@ -139,7 +147,7 @@ vulkan_memory_allocator_visitor :: (decl: *Declaration, parent_decl: *Declaratio
 #import "BuildCpp";
 
 VMA_FOOTER :: #string DONE
-#import "Vulkan";
+#import "Vulkan_1_3";
 
 #if OS == .WINDOWS {
     libvma :: #library "VMA";
