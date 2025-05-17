@@ -119,7 +119,9 @@ log :: (type : Log_Type, s : string, callLoc := #caller_location) {
 
     filename := path_filename(callLoc.fully_pathed_filename);
     print_to_builder(*logMsg, "% (%:%) %: %\n", timestamp, filename, callLoc.line_number, desig, s);
-    file_write(*LOG_FILE, builder_to_string(*logMsg));
+    logMsgString := builder_to_string(*logMsg);
+    file_write(*LOG_FILE, logMsgString);
+    if IS_DEV then print(logMsgString);
 
     if type == .FATAL {
 	file_close(*LOG_FILE);
