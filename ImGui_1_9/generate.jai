@@ -50,7 +50,8 @@ generate_bindings :: () -> bool {
         array_add(*imgui_src_files, tprint("%/imgui_demo.cpp", IMGUI_PATH)); // <- Remove this
         array_add(*imgui_src_files, tprint("%/backends/imgui_impl_vulkan.cpp", IMGUI_PATH));
         array_add(*imgui_src_files, tprint("%/backends/imgui_impl_win32.cpp", IMGUI_PATH));
-
+        array_add(*imgui_src_files, tprint("%/backends/imgui_impl_opengl3.cpp", IMGUI_PATH));
+		
         success := true;
         #if OS == .WINDOWS {
             make_directory_if_it_does_not_exist("windows");
@@ -106,6 +107,7 @@ generate_bindings :: () -> bool {
         array_add(*source_files,  tprint("%/imgui.h", IMGUI_PATH));
         array_add(*source_files,  tprint("%/backends/imgui_impl_vulkan.h", IMGUI_PATH));
         array_add(*source_files,  tprint("%/backends/imgui_impl_win32.h", IMGUI_PATH));
+		array_add(*source_files,  tprint("%/backends/imgui_impl_opengl3.h", IMGUI_PATH));
         array_add(*extra_clang_arguments, "-x", "c++", "-DWIN32_LEAN_AND_MEAN");
         array_add(*flatten_namespaces, "ImGui");
         array_add(*strip_prefixes, "ImGui");

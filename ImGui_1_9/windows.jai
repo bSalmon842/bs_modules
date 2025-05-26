@@ -3723,6 +3723,18 @@ ImplWin32_EnableDpiAwareness :: () -> void #foreign imgui "?ImGui_ImplWin32_Enab
 ImplWin32_GetDpiScaleForHwnd :: (hwnd: *void) -> float #foreign imgui "?ImGui_ImplWin32_GetDpiScaleForHwnd@@YAMPEAX@Z";
 ImplWin32_GetDpiScaleForMonitor :: (monitor: *void) -> float #foreign imgui "?ImGui_ImplWin32_GetDpiScaleForMonitor@@YAMPEAX@Z";
 
+// Backend API
+ImplOpenGL3_Init :: (glsl_version: *u8 = null) -> bool #foreign imgui "?ImGui_ImplOpenGL3_Init@@YA_NPEBD@Z";
+ImplOpenGL3_Shutdown :: () -> void #foreign imgui "?ImGui_ImplOpenGL3_Shutdown@@YAXXZ";
+ImplOpenGL3_NewFrame :: () -> void #foreign imgui "?ImGui_ImplOpenGL3_NewFrame@@YAXXZ";
+ImplOpenGL3_RenderDrawData :: (draw_data: *ImDrawData) -> void #foreign imgui "?ImGui_ImplOpenGL3_RenderDrawData@@YAXPEAUImDrawData@@@Z";
+
+// (Optional) Called by Init/NewFrame/Shutdown
+ImplOpenGL3_CreateFontsTexture :: () -> bool #foreign imgui "?ImGui_ImplOpenGL3_CreateFontsTexture@@YA_NXZ";
+ImplOpenGL3_DestroyFontsTexture :: () -> void #foreign imgui "?ImGui_ImplOpenGL3_DestroyFontsTexture@@YAXXZ";
+ImplOpenGL3_CreateDeviceObjects :: () -> bool #foreign imgui "?ImGui_ImplOpenGL3_CreateDeviceObjects@@YA_NXZ";
+ImplOpenGL3_DestroyDeviceObjects :: () -> void #foreign imgui "?ImGui_ImplOpenGL3_DestroyDeviceObjects@@YAXXZ";
+
 #scope_file
 
 #import "Basic"; // For push_context
