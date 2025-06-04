@@ -9,4 +9,4 @@ VkAndroidSurfaceCreateInfoKHR :: struct {
 }
 
 #scope_file
-Android :: #import "Android";
+Android :: #import "Android"();

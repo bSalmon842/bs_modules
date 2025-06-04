@@ -1,5 +1,2 @@
-#if OS == .WINDOWS {
-    #load "generated_windows.jai";
-} else #if OS == .LINUX || OS == .ANDROID {
-    #load "generated_linux.jai";
-}
+#load "main_bindings.jai";
+#import "Vulkan_1_3";

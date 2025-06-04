@@ -19184,12 +19184,10 @@ PFN_vkCmdDrawMeshTasksIndirectCountEXT :: #type (commandBuffer: VkCommandBuffer,
 
 #scope_file
 
-#scope_file
-
 #if OS == .WINDOWS {
     libvulkan :: #library "win/vulkan-1";
-} else #if OS == .LINUX {
-    libvulkan :: #system_library "libvulkan.so.1";
+} else #if OS == .LINUX || OS == ANDROID {
+    libvulkan :: #system_library "libvulkan";
 } else {
     #assert(false);
 }
