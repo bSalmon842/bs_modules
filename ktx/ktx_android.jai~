@@ -1,0 +1,1845 @@
+//
+// This file was auto-generated using the following command:
+//
+// jai generate.jai - android
+//
+
+
+
+KTX_ANIMDATA_KEY :: "KTXanimData";
+
+KTX_ORIENTATION_KEY :: "KTXorientation";
+
+KTX_SWIZZLE_KEY :: "KTXswizzle";
+
+KTX_WRITER_KEY :: "KTXwriter";
+
+KTX_WRITER_SCPARAMS_KEY :: "KTXwriterScParams";
+
+KTX_ORIENTATION1_FMT :: "S=%c";
+
+KTX_ORIENTATION2_FMT :: "S=%c,T=%c";
+
+KTX_ORIENTATION3_FMT :: "S=%c,T=%c,R=%c";
+
+KTX_GL_UNPACK_ALIGNMENT :: 4;
+
+KTX_error_code :: ktx_error_code_e;
+
+KTX_ENDIAN_REF :: 0x04030201;
+KTX_ENDIAN_REF_REV :: 0x01020304;
+KTX_HEADER_SIZE :: 64;
+
+/* To avoid including <KHR/khrplatform.h> define our own types. */
+ktx_uint8_t :: u8;
+ktx_bool_t :: bool;
+
+ktx_uint16_t :: u16;
+ktx_int16_t :: s16;
+ktx_uint32_t :: u32;
+ktx_int32_t :: s32;
+ktx_size_t :: u64;
+ktx_uint64_t :: u64;
+ktx_int64_t :: s64;
+
+/* This will cause compilation to fail if size of uint32 != 4. */
+ktx_uint32_t_SIZE_ASSERT :: [1] u8;
+
+/*
+* To avoid having to including gl.h ...
+*/
+GLboolean :: u8;
+GLenum :: u32;
+GLint :: s32;
+GLsizei :: s32;
+GLuint :: u32;
+GLubyte :: u8;
+
+/**
+* @~English
+* @brief Error codes returned by library functions.
+*/
+ktx_error_code_e :: enum u32 {
+    SUCCESS                   :: 0;
+    FILE_DATA_ERROR           :: 1;
+    FILE_ISPIPE               :: 2;
+    FILE_OPEN_FAILED          :: 3;
+    FILE_OVERFLOW             :: 4;
+    FILE_READ_ERROR           :: 5;
+    FILE_SEEK_ERROR           :: 6;
+    FILE_UNEXPECTED_EOF       :: 7;
+    FILE_WRITE_ERROR          :: 8;
+    GL_ERROR                  :: 9;
+    INVALID_OPERATION         :: 10;
+    INVALID_VALUE             :: 11;
+    NOT_FOUND                 :: 12;
+    OUT_OF_MEMORY             :: 13;
+    TRANSCODE_FAILED          :: 14;
+    UNKNOWN_FILE_FORMAT       :: 15;
+    UNSUPPORTED_TEXTURE_TYPE  :: 16;
+    UNSUPPORTED_FEATURE       :: 17;
+    LIBRARY_NOT_LINKED        :: 18;
+    DECOMPRESS_LENGTH_ERROR   :: 19;
+    DECOMPRESS_CHECKSUM_ERROR :: 20;
+    ERROR_MAX_ENUM            :: 20;
+
+    KTX_SUCCESS                   :: SUCCESS;
+    KTX_FILE_DATA_ERROR           :: FILE_DATA_ERROR;
+    KTX_FILE_ISPIPE               :: FILE_ISPIPE;
+    KTX_FILE_OPEN_FAILED          :: FILE_OPEN_FAILED;
+    KTX_FILE_OVERFLOW             :: FILE_OVERFLOW;
+    KTX_FILE_READ_ERROR           :: FILE_READ_ERROR;
+    KTX_FILE_SEEK_ERROR           :: FILE_SEEK_ERROR;
+    KTX_FILE_UNEXPECTED_EOF       :: FILE_UNEXPECTED_EOF;
+    KTX_FILE_WRITE_ERROR          :: FILE_WRITE_ERROR;
+    KTX_GL_ERROR                  :: GL_ERROR;
+    KTX_INVALID_OPERATION         :: INVALID_OPERATION;
+    KTX_INVALID_VALUE             :: INVALID_VALUE;
+    KTX_NOT_FOUND                 :: NOT_FOUND;
+    KTX_OUT_OF_MEMORY             :: OUT_OF_MEMORY;
+    KTX_TRANSCODE_FAILED          :: TRANSCODE_FAILED;
+    KTX_UNKNOWN_FILE_FORMAT       :: UNKNOWN_FILE_FORMAT;
+    KTX_UNSUPPORTED_TEXTURE_TYPE  :: UNSUPPORTED_TEXTURE_TYPE;
+    KTX_UNSUPPORTED_FEATURE       :: UNSUPPORTED_FEATURE;
+    KTX_LIBRARY_NOT_LINKED        :: LIBRARY_NOT_LINKED;
+    KTX_DECOMPRESS_LENGTH_ERROR   :: DECOMPRESS_LENGTH_ERROR;
+    KTX_DECOMPRESS_CHECKSUM_ERROR :: DECOMPRESS_CHECKSUM_ERROR;
+    KTX_ERROR_MAX_ENUM            :: ERROR_MAX_ENUM;
+}
+
+/**
+* @~English
+* @brief Result codes returned by library functions.
+*/
+ktxResult :: ktx_error_code_e;
+
+ktxKVListEntry :: struct {}
+/**
+* @class ktxHashList
+* @~English
+* @brief Opaque handle to a ktxHashList.
+*/
+ktxHashList :: *ktxKVListEntry;
+
+/**
+* @class ktxHashListEntry
+* @~English
+* @brief Opaque handle to an entry in a @ref ktxHashList.
+*/
+ktxHashListEntry :: ktxKVListEntry;
+
+ktxOrientationX :: enum u32 {
+    LEFT  :: 108;
+    RIGHT :: 114;
+    KTX_ORIENT_X_LEFT  :: LEFT;
+    KTX_ORIENT_X_RIGHT :: RIGHT;
+}
+
+ktxOrientationY :: enum u32 {
+    UP   :: 117;
+    DOWN :: 100;
+    KTX_ORIENT_Y_UP   :: UP;
+    KTX_ORIENT_Y_DOWN :: DOWN;
+}
+
+ktxOrientationZ :: enum u32 {
+    IN  :: 105;
+    OUT :: 111;
+    KTX_ORIENT_Z_IN  :: IN;
+    KTX_ORIENT_Z_OUT :: OUT;
+}
+
+class_id :: enum u32 {
+    _1_c :: 1;
+    _2_c :: 2;
+
+    ktxTexture1_c :: _1_c;
+    ktxTexture2_c :: _2_c;
+}
+
+/**
+* @~English
+* @brief Struct describing the logical orientation of an image.
+*/
+ktxOrientation :: struct {
+    x: ktxOrientationX; /*!< Orientation in X */
+    y: ktxOrientationY; /*!< Orientation in Y */
+    z: ktxOrientationZ; /*!< Orientation in Z */
+}
+
+/**
+* @class ktxTexture
+* @~English
+* @brief Base class representing a texture.
+*
+* ktxTextures should be created only by one of the provided
+* functions and these fields should be considered read-only.
+*/
+ktxTexture :: struct {
+    classId:         class_id;
+    vtbl:            *ktxTexture_vtbl;
+    ktxTexture_vvtbl :: struct {}
+    vvtbl:           *ktxTexture_vvtbl;
+    ktxTexture_protected :: struct {}
+    _protected:      *ktxTexture_protected;
+    isArray:         ktx_bool_t;
+    isCubemap:       ktx_bool_t;
+    isCompressed:    ktx_bool_t;
+    generateMipmaps: ktx_bool_t;
+    baseWidth:       ktx_uint32_t;
+    baseHeight:      ktx_uint32_t;
+    baseDepth:       ktx_uint32_t;
+    numDimensions:   ktx_uint32_t;
+    numLevels:       ktx_uint32_t;
+    numLayers:       ktx_uint32_t;
+    numFaces:        ktx_uint32_t;
+    orientation:     ktxOrientation;
+    kvDataHead:      ktxHashList;
+    kvDataLen:       ktx_uint32_t;
+    kvData:          *ktx_uint8_t;
+    dataSize:        ktx_size_t;
+    pData:           *ktx_uint8_t;
+}
+
+/**
+* @memberof ktxTexture
+* @~English
+* @brief Signature of function called by the <tt>ktxTexture_Iterate*</tt>
+*        functions to receive image data.
+*
+* The function parameters are used to pass values which change for each image.
+* Obtain values which are uniform across all images from the @c ktxTexture
+* object.
+*
+* @param [in] miplevel        MIP level from 0 to the max level which is
+*                             dependent on the texture size.
+* @param [in] face            usually 0; for cube maps, one of the 6 cube
+*                             faces in the order +X, -X, +Y, -Y, +Z, -Z,
+*                             0 to 5.
+* @param [in] width           width of the image.
+* @param [in] height          height of the image or, for 1D textures
+*                             textures, 1.
+* @param [in] depth           depth of the image or, for 1D & 2D
+*                             textures, 1.
+* @param [in] faceLodSize     number of bytes of data pointed at by
+*                             @p pixels.
+* @param [in] pixels          pointer to the image data.
+* @param [in,out] userdata    pointer for the application to pass data to and
+*                             from the callback function.
+*/
+PFNKTXITERCB :: #type (miplevel: s32, face: s32, width: s32, height: s32, depth: s32, faceLodSize: ktx_uint64_t, pixels: *void, userdata: *void) -> ktx_error_code_e #c_call;
+
+/* Don't use KTX_APIENTRYP to avoid a Doxygen bug. */
+PFNKTEXDESTROY :: #type (This: *ktxTexture) -> void #c_call;
+
+PFNKTEXGETIMAGEOFFSET :: #type (This: *ktxTexture, level: ktx_uint32_t, layer: ktx_uint32_t, faceSlice: ktx_uint32_t, pOffset: *ktx_size_t) -> ktx_error_code_e #c_call;
+
+PFNKTEXGETDATASIZEUNCOMPRESSED :: #type (This: *ktxTexture) -> ktx_size_t #c_call;
+
+PFNKTEXGETIMAGESIZE :: #type (This: *ktxTexture, level: ktx_uint32_t) -> ktx_size_t #c_call;
+
+PFNKTEXGETLEVELSIZE :: #type (This: *ktxTexture, level: ktx_uint32_t) -> ktx_size_t #c_call;
+
+PFNKTEXITERATELEVELS :: #type (This: *ktxTexture, iterCb: PFNKTXITERCB, userdata: *void) -> ktx_error_code_e #c_call;
+
+PFNKTEXITERATELOADLEVELFACES :: #type (This: *ktxTexture, iterCb: PFNKTXITERCB, userdata: *void) -> ktx_error_code_e #c_call;
+
+PFNKTEXLOADIMAGEDATA :: #type (This: *ktxTexture, pBuffer: *ktx_uint8_t, bufSize: ktx_size_t) -> ktx_error_code_e #c_call;
+
+PFNKTEXNEEDSTRANSCODING :: #type (This: *ktxTexture) -> ktx_bool_t #c_call;
+
+PFNKTEXSETIMAGEFROMMEMORY :: #type (This: *ktxTexture, level: ktx_uint32_t, layer: ktx_uint32_t, faceSlice: ktx_uint32_t, src: *ktx_uint8_t, srcSize: ktx_size_t) -> ktx_error_code_e #c_call;
+
+PFNKTEXSETIMAGEFROMSTDIOSTREAM :: #type (This: *ktxTexture, level: ktx_uint32_t, layer: ktx_uint32_t, faceSlice: ktx_uint32_t, src: *FILE, srcSize: ktx_size_t) -> ktx_error_code_e #c_call;
+
+PFNKTEXWRITETOSTDIOSTREAM :: #type (This: *ktxTexture, dstsstr: *FILE) -> ktx_error_code_e #c_call;
+
+PFNKTEXWRITETONAMEDFILE :: #type (This: *ktxTexture, dstname: *u8) -> ktx_error_code_e #c_call;
+
+PFNKTEXWRITETOMEMORY :: #type (This: *ktxTexture, bytes: **ktx_uint8_t, size: *ktx_size_t) -> ktx_error_code_e #c_call;
+
+PFNKTEXWRITETOSTREAM :: #type (This: *ktxTexture, dststr: *ktxStream) -> ktx_error_code_e #c_call;
+
+/**
+* @memberof ktxTexture
+* @~English
+* @brief Table of virtual ktxTexture methods.
+*/
+ktxTexture_vtbl :: struct {
+    Destroy:                 PFNKTEXDESTROY;
+    GetImageOffset:          PFNKTEXGETIMAGEOFFSET;
+    GetDataSizeUncompressed: PFNKTEXGETDATASIZEUNCOMPRESSED;
+    GetImageSize:            PFNKTEXGETIMAGESIZE;
+    GetLevelSize:            PFNKTEXGETLEVELSIZE;
+    IterateLevels:           PFNKTEXITERATELEVELS;
+    IterateLoadLevelFaces:   PFNKTEXITERATELOADLEVELFACES;
+    NeedsTranscoding:        PFNKTEXNEEDSTRANSCODING;
+    LoadImageData:           PFNKTEXLOADIMAGEDATA;
+    SetImageFromMemory:      PFNKTEXSETIMAGEFROMMEMORY;
+    SetImageFromStdioStream: PFNKTEXSETIMAGEFROMSTDIOSTREAM;
+    WriteToStdioStream:      PFNKTEXWRITETOSTDIOSTREAM;
+    WriteToNamedFile:        PFNKTEXWRITETONAMEDFILE;
+    WriteToMemory:           PFNKTEXWRITETOMEMORY;
+    WriteToStream:           PFNKTEXWRITETOSTREAM;
+}
+
+/**
+* @class ktxTexture1
+* @~English
+* @brief Class representing a KTX version 1 format texture.
+*
+* ktxTextures should be created only by one of the ktxTexture_Create*
+* functions and these fields should be considered read-only.
+*/
+ktxTexture1 :: struct {
+    classId:              class_id;
+    vtbl:                 *ktxTexture_vtbl;
+    vvtbl:                *ktxTexture.ktxTexture_vvtbl;
+    _protected:           *ktxTexture.ktxTexture_protected;
+    isArray:              ktx_bool_t;
+    isCubemap:            ktx_bool_t;
+    isCompressed:         ktx_bool_t;
+    generateMipmaps:      ktx_bool_t;
+    baseWidth:            ktx_uint32_t;
+    baseHeight:           ktx_uint32_t;
+    baseDepth:            ktx_uint32_t;
+    numDimensions:        ktx_uint32_t;
+    numLevels:            ktx_uint32_t;
+    numLayers:            ktx_uint32_t;
+    numFaces:             ktx_uint32_t;
+    orientation:          ktxOrientation;
+    kvDataHead:           ktxHashList;
+    kvDataLen:            ktx_uint32_t;
+    kvData:               *ktx_uint8_t;
+    dataSize:             ktx_size_t;
+    pData:                *ktx_uint8_t;
+    glFormat:             ktx_uint32_t; /*!< Format of the texture data, e.g., GL_RGB. */
+    /*!< Internal format of the texture data,
+    e.g., GL_RGB8. */
+    glInternalformat:     ktx_uint32_t;
+
+    /*!< Base format of the texture data,
+    e.g., GL_RGB. */
+    glBaseInternalformat: ktx_uint32_t;
+
+    glType:               ktx_uint32_t; /*!< Type of the texture data, e.g, GL_UNSIGNED_BYTE.*/
+    ktxTexture1_private :: struct {}
+    _private:             *ktxTexture1_private; /*!< Private data. */
+}
+
+/**
+* @~English
+* @brief Enumerators identifying the supercompression scheme.
+*/
+ktxSupercmpScheme :: enum u32 {
+    NONE               :: 0;
+    BASIS_LZ           :: 1;
+    ZSTD               :: 2;
+    ZLIB               :: 3;
+    BEGIN_RANGE        :: 0;
+    END_RANGE          :: 3;
+    BEGIN_VENDOR_RANGE :: 65536;
+    END_VENDOR_RANGE   :: 131071;
+    BEGIN_RESERVED     :: 131072;
+
+    KTX_SS_NONE               :: NONE;
+    KTX_SS_BASIS_LZ           :: BASIS_LZ;
+    KTX_SS_ZSTD               :: ZSTD;
+    KTX_SS_ZLIB               :: ZLIB;
+    KTX_SS_BEGIN_RANGE        :: BEGIN_RANGE;
+    KTX_SS_END_RANGE          :: END_RANGE;
+    KTX_SS_BEGIN_VENDOR_RANGE :: BEGIN_VENDOR_RANGE;
+    KTX_SS_END_VENDOR_RANGE   :: END_VENDOR_RANGE;
+    KTX_SS_BEGIN_RESERVED     :: BEGIN_RESERVED;
+}
+
+/**
+* @class ktxTexture2
+* @~English
+* @brief Class representing a KTX version 2 format texture.
+*
+* ktxTextures should be created only by one of the ktxTexture_Create*
+* functions and these fields should be considered read-only.
+*/
+ktxTexture2 :: struct {
+    classId:                class_id;
+    vtbl:                   *ktxTexture_vtbl;
+    vvtbl:                  *ktxTexture.ktxTexture_vvtbl;
+    _protected:             *ktxTexture.ktxTexture_protected;
+    isArray:                ktx_bool_t;
+    isCubemap:              ktx_bool_t;
+    isCompressed:           ktx_bool_t;
+    generateMipmaps:        ktx_bool_t;
+    baseWidth:              ktx_uint32_t;
+    baseHeight:             ktx_uint32_t;
+    baseDepth:              ktx_uint32_t;
+    numDimensions:          ktx_uint32_t;
+    numLevels:              ktx_uint32_t;
+    numLayers:              ktx_uint32_t;
+    numFaces:               ktx_uint32_t;
+    orientation:            ktxOrientation;
+    kvDataHead:             ktxHashList;
+    kvDataLen:              ktx_uint32_t;
+    kvData:                 *ktx_uint8_t;
+    dataSize:               ktx_size_t;
+    pData:                  *ktx_uint8_t;
+    vkFormat:               ktx_uint32_t;
+    pDfd:                   *ktx_uint32_t;
+    supercompressionScheme: ktxSupercmpScheme;
+    isVideo:                ktx_bool_t;
+    duration:               ktx_uint32_t;
+    timescale:              ktx_uint32_t;
+    loopcount:              ktx_uint32_t;
+    ktxTexture2_private :: struct {}
+    _private:               *ktxTexture2_private; /*!< Private data. */
+}
+
+/**
+* @memberof ktxTexture
+* @~English
+* @brief Structure for passing texture information to ktxTexture1\_Create() and
+*        ktxTexture2\_Create().
+*
+* @sa @ref ktxTexture1::ktxTexture1\_Create() "ktxTexture1_Create()"
+* @sa @ref ktxTexture2::ktxTexture2\_Create() "ktxTexture2_Create()"
+*/
+ktxTextureCreateInfo :: struct {
+    /*!< Internal format for the texture, e.g.,
+    GL_RGB8. Ignored when creating a
+    ktxTexture2. */
+    glInternalformat: ktx_uint32_t;
+
+    /*!< VkFormat for texture. Ignored when creating a
+    ktxTexture1. */
+    vkFormat:         ktx_uint32_t;
+
+    /*!< Pointer to DFD. Used only when creating a
+    ktxTexture2 and only if vkFormat is
+    VK_FORMAT_UNDEFINED. */
+    pDfd:             *ktx_uint32_t;
+
+    baseWidth:        ktx_uint32_t; /*!< Width of the base level of the texture. */
+    baseHeight:       ktx_uint32_t; /*!< Height of the base level of the texture. */
+    baseDepth:        ktx_uint32_t; /*!< Depth of the base level of the texture. */
+    /*!< Number of dimensions in the texture, 1, 2
+    or 3. */
+    numDimensions:    ktx_uint32_t;
+
+    /*!< Number of mip levels in the texture. Should be
+    1 if @c generateMipmaps is KTX_TRUE; */
+    numLevels:        ktx_uint32_t;
+
+    numLayers:        ktx_uint32_t; /*!< Number of array layers in the texture. */
+    numFaces:         ktx_uint32_t; /*!< Number of faces: 6 for cube maps, 1 otherwise. */
+    /*!< Set to KTX_TRUE if the texture is to be an
+    array texture. Means OpenGL will use a
+    GL_TEXTURE_*_ARRAY target. */
+    isArray:          ktx_bool_t;
+
+    /*!< Set to KTX_TRUE if mipmaps should be
+    generated for the texture when loading
+    into a 3D API. */
+    generateMipmaps:  ktx_bool_t;
+}
+
+/**
+* @memberof ktxTexture
+* @~English
+* @brief Enum for requesting, or not, allocation of storage for images.
+*
+* @sa ktxTexture1_Create() and ktxTexture2_Create().
+*/
+ktxTextureCreateStorageEnum :: enum u32 {
+    NO_STORAGE    :: 0;
+    ALLOC_STORAGE :: 1;
+
+    KTX_TEXTURE_CREATE_NO_STORAGE    :: NO_STORAGE;
+    KTX_TEXTURE_CREATE_ALLOC_STORAGE :: ALLOC_STORAGE;
+}
+
+/**
+* @memberof ktxTexture
+* @~English
+* @brief Flags for requesting services during creation.
+*
+* @sa ktxTexture_CreateFrom*
+*/
+ktxTextureCreateFlagBits :: enum_flags u32 {
+    NO_FLAGS              :: 0x0;
+    LOAD_IMAGE_DATA_BIT   :: 0x1;
+
+    RAW_KVDATA_BIT        :: 0x2;
+
+    SKIP_KVDATA_BIT       :: 0x4;
+
+    CHECK_GLTF_BASISU_BIT :: 0x8;
+
+    KTX_TEXTURE_CREATE_NO_FLAGS              :: NO_FLAGS;
+    KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT   :: LOAD_IMAGE_DATA_BIT;
+
+    KTX_TEXTURE_CREATE_RAW_KVDATA_BIT        :: RAW_KVDATA_BIT;
+
+    KTX_TEXTURE_CREATE_SKIP_KVDATA_BIT       :: SKIP_KVDATA_BIT;
+
+    KTX_TEXTURE_CREATE_CHECK_GLTF_BASISU_BIT :: CHECK_GLTF_BASISU_BIT;
+}
+
+/**
+* @memberof ktxTexture
+* @~English
+* @brief Type for TextureCreateFlags parameters.
+*
+* @sa ktxTexture_CreateFrom*()
+*/
+ktxTextureCreateFlags :: ktxTextureCreateFlagBits;
+
+ktx_off_t :: s64;
+
+ktxMem :: struct {}
+
+streamType :: enum u32 {
+    File   :: 1;
+    Memory :: 2;
+    Custom :: 3;
+    eStreamTypeFile   :: File;
+    eStreamTypeMemory :: Memory;
+    eStreamTypeCustom :: Custom;
+}
+
+/**
+* @~English
+* @brief type for a pointer to a stream reading function
+*/
+ktxStream_read :: #type (str: *ktxStream, dst: *void, count: ktx_size_t) -> ktx_error_code_e #c_call;
+
+/**
+* @~English
+* @brief type for a pointer to a stream skipping function
+*/
+ktxStream_skip :: #type (str: *ktxStream, count: ktx_size_t) -> ktx_error_code_e #c_call;
+
+/**
+* @~English
+* @brief type for a pointer to a stream writing function
+*/
+ktxStream_write :: #type (str: *ktxStream, src: *void, size: ktx_size_t, count: ktx_size_t) -> ktx_error_code_e #c_call;
+
+/**
+* @~English
+* @brief type for a pointer to a stream position query function
+*/
+ktxStream_getpos :: #type (str: *ktxStream, offset: *ktx_off_t) -> ktx_error_code_e #c_call;
+
+/**
+* @~English
+* @brief type for a pointer to a stream position query function
+*/
+ktxStream_setpos :: #type (str: *ktxStream, offset: ktx_off_t) -> ktx_error_code_e #c_call;
+
+/**
+* @~English
+* @brief type for a pointer to a stream size query function
+*/
+ktxStream_getsize :: #type (str: *ktxStream, size: *ktx_size_t) -> ktx_error_code_e #c_call;
+
+/**
+* @~English
+* @brief Destruct a stream
+*/
+ktxStream_destruct :: #type (str: *ktxStream) -> void #c_call;
+
+/**
+* @~English
+*
+* @brief Interface of ktxStream.
+*
+* @author Maksim Kolesin
+* @author Georg Kolling, Imagination Technology
+* @author Mark Callow, HI Corporation
+*/
+ktxStream :: struct {
+    read:            ktxStream_read; /*!< pointer to function for reading bytes. */
+    skip:            ktxStream_skip; /*!< pointer to function for skipping bytes. */
+    write:           ktxStream_write; /*!< pointer to function for writing bytes. */
+    getpos:          ktxStream_getpos; /*!< pointer to function for getting current position in stream. */
+    setpos:          ktxStream_setpos; /*!< pointer to function for setting current position in stream. */
+    getsize:         ktxStream_getsize; /*!< pointer to function for querying size. */
+    destruct:        ktxStream_destruct; /*!< destruct the stream. */
+
+    type:            streamType;
+    data:            union {
+        file:       *FILE; /**< a stdio FILE pointer for a ktxFileStream. */
+        mem:        *ktxMem; /**< a pointer to a ktxMem struct for a ktxMemStream. */
+        custom_ptr: struct {
+            address:          *void; /**< pointer to the data. */
+            allocatorAddress: *void; /**< pointer to a memory allocator. */
+            size:             ktx_size_t; /**< size of the data. */
+        }; /**< pointer to a struct for custom streams. */
+    }; /**< pointer to the stream data. */
+
+    readpos:         ktx_off_t; /**< used by FileStream for stdin. */
+    closeOnDestruct: ktx_bool_t; /**< Close FILE* or dispose of memory on destruct. */
+}
+
+/**
+* @~English
+* @brief typedef of function pointer returned by GLGetProcAddress functions.
+*/
+PFNVOIDFUNCTION :: #type () -> void #c_call;
+
+/**
+* @~English
+* @brief typedef of pointer to function for retrieving OpenGL function pointers.
+*/
+PFNGLGETPROCADDRESS :: #type (proc: *u8) -> PFNVOIDFUNCTION #c_call;
+
+/*
+* Load pointers for the OpenGL functions needed by ktxTexture_GLUpload.
+*/
+ktxLoadOpenGL :: (pfnGLGetProcAddress: PFNGLGETPROCADDRESS) -> ktx_error_code_e #foreign libktx;
+
+/*
+* These four create a ktxTexture1 or ktxTexture2 according to the data
+* header, and return a pointer to the base ktxTexture class.
+*/
+ktxTexture_CreateFromStdioStream :: (stdioStream: *FILE, createFlags: ktxTextureCreateFlags, newTex: **ktxTexture) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture_CreateFromNamedFile :: (filename: *u8, createFlags: ktxTextureCreateFlags, newTex: **ktxTexture) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture_CreateFromMemory :: (bytes: *ktx_uint8_t, size: ktx_size_t, createFlags: ktxTextureCreateFlags, newTex: **ktxTexture) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture_CreateFromStream :: (stream: *ktxStream, createFlags: ktxTextureCreateFlags, newTex: **ktxTexture) -> ktx_error_code_e #foreign libktx;
+
+/*
+* Returns a pointer to the image data of a ktxTexture object.
+*/
+ktxTexture_GetData :: (This: *ktxTexture) -> *ktx_uint8_t #foreign libktx;
+
+/*
+* Returns the pitch of a row of an image at the specified level.
+* Similar to the rowPitch in a VkSubResourceLayout.
+*/
+ktxTexture_GetRowPitch :: (This: *ktxTexture, level: ktx_uint32_t) -> ktx_uint32_t #foreign libktx;
+
+/*
+* Return the element size of the texture's images.
+*/
+ktxTexture_GetElementSize :: (This: *ktxTexture) -> ktx_uint32_t #foreign libktx;
+
+/*
+* Returns the size of all the image data of a ktxTexture object in bytes.
+*/
+ktxTexture_GetDataSize :: (This: *ktxTexture) -> ktx_size_t #foreign libktx;
+
+/* Uploads a texture to OpenGL {,ES}. */
+ktxTexture_GLUpload :: (This: *ktxTexture, pTexture: *GLuint, pTarget: *GLenum, pGlerror: *GLenum) -> ktx_error_code_e #foreign libktx;
+
+/*
+* Iterate over the levels or faces in a ktxTexture object.
+*/
+ktxTexture_IterateLevelFaces :: (This: *ktxTexture, iterCb: PFNKTXITERCB, userdata: *void) -> ktx_error_code_e #foreign libktx;
+
+/*
+* Create a new ktxTexture1.
+*/
+ktxTexture1_Create :: (createInfo: *ktxTextureCreateInfo, storageAllocation: ktxTextureCreateStorageEnum, newTex: **ktxTexture1) -> ktx_error_code_e #foreign libktx;
+
+/*
+* These four create a ktxTexture1 provided the data is in KTX format.
+*/
+ktxTexture1_CreateFromStdioStream :: (stdioStream: *FILE, createFlags: ktxTextureCreateFlags, newTex: **ktxTexture1) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture1_CreateFromNamedFile :: (filename: *u8, createFlags: ktxTextureCreateFlags, newTex: **ktxTexture1) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture1_CreateFromMemory :: (bytes: *ktx_uint8_t, size: ktx_size_t, createFlags: ktxTextureCreateFlags, newTex: **ktxTexture1) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture1_CreateFromStream :: (stream: *ktxStream, createFlags: ktxTextureCreateFlags, newTex: **ktxTexture1) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture1_Destroy :: (This: *ktxTexture1) -> void #foreign libktx;
+
+ktxTexture1_NeedsTranscoding :: (This: *ktxTexture1) -> ktx_bool_t #foreign libktx;
+
+ktxTexture1_LoadImageData :: (This: *ktxTexture1, pBuffer: *ktx_uint8_t, bufSize: ktx_size_t) -> ktx_error_code_e #foreign libktx;
+
+/*
+* These four write a ktxTexture1 object to a KTX v1 file.
+*/
+ktxTexture1_WriteToStdioStream :: (This: *ktxTexture1, dstsstr: *FILE) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture1_WriteToNamedFile :: (This: *ktxTexture1, dstname: *u8) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture1_WriteToMemory :: (This: *ktxTexture1, bytes: **ktx_uint8_t, size: *ktx_size_t) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture1_WriteToStream :: (This: *ktxTexture1, dststr: *ktxStream) -> ktx_error_code_e #foreign libktx;
+
+/*
+* These four write a ktxTexture1 object to a KTX v2 file.
+*/
+ktxTexture1_WriteKTX2ToStdioStream :: (This: *ktxTexture1, dstsstr: *FILE) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture1_WriteKTX2ToNamedFile :: (This: *ktxTexture1, dstname: *u8) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture1_WriteKTX2ToMemory :: (This: *ktxTexture1, bytes: **ktx_uint8_t, size: *ktx_size_t) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture1_WriteKTX2ToStream :: (This: *ktxTexture1, dststr: *ktxStream) -> ktx_error_code_e #foreign libktx;
+
+/*
+* Create a new ktxTexture2.
+*/
+ktxTexture2_Create :: (createInfo: *ktxTextureCreateInfo, storageAllocation: ktxTextureCreateStorageEnum, newTex: **ktxTexture2) -> ktx_error_code_e #foreign libktx;
+
+/*
+* Create a new ktxTexture2 as a copy of an existing texture.
+*/
+ktxTexture2_CreateCopy :: (orig: *ktxTexture2, newTex: **ktxTexture2) -> ktx_error_code_e #foreign libktx;
+
+/*
+* These four create a ktxTexture2 provided the data is in KTX2 format.
+*/
+ktxTexture2_CreateFromStdioStream :: (stdioStream: *FILE, createFlags: ktxTextureCreateFlags, newTex: **ktxTexture2) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture2_CreateFromNamedFile :: (filename: *u8, createFlags: ktxTextureCreateFlags, newTex: **ktxTexture2) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture2_CreateFromMemory :: (bytes: *ktx_uint8_t, size: ktx_size_t, createFlags: ktxTextureCreateFlags, newTex: **ktxTexture2) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture2_CreateFromStream :: (stream: *ktxStream, createFlags: ktxTextureCreateFlags, newTex: **ktxTexture2) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture2_Destroy :: (This: *ktxTexture2) -> void #foreign libktx;
+
+ktxTexture2_CompressBasis :: (This: *ktxTexture2, quality: ktx_uint32_t) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture2_DeflateZstd :: (This: *ktxTexture2, level: ktx_uint32_t) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture2_DeflateZLIB :: (This: *ktxTexture2, level: ktx_uint32_t) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture2_GetComponentInfo :: (This: *ktxTexture2, numComponents: *ktx_uint32_t, componentByteLength: *ktx_uint32_t) -> void #foreign libktx;
+
+ktxTexture2_GetImageOffset :: (This: *ktxTexture2, level: ktx_uint32_t, layer: ktx_uint32_t, faceSlice: ktx_uint32_t, pOffset: *ktx_size_t) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture2_GetNumComponents :: (This: *ktxTexture2) -> ktx_uint32_t #foreign libktx;
+
+ktxTexture2_GetTransferFunction_e :: (This: *ktxTexture2) -> khr_df_transfer_e #foreign libktx;
+
+/* For backward compatibility. */
+ktxTexture2_GetOETF_e :: (This: *ktxTexture2) -> khr_df_transfer_e #foreign libktx;
+
+ktxTexture2_GetOETF :: (This: *ktxTexture2) -> ktx_uint32_t #foreign libktx;
+
+ktxTexture2_GetColorModel_e :: (This: *ktxTexture2) -> khr_df_model_e #foreign libktx;
+
+ktxTexture2_GetPremultipliedAlpha :: (This: *ktxTexture2) -> ktx_bool_t #foreign libktx;
+
+ktxTexture2_GetPrimaries_e :: (This: *ktxTexture2) -> khr_df_primaries_e #foreign libktx;
+
+ktxTexture2_NeedsTranscoding :: (This: *ktxTexture2) -> ktx_bool_t #foreign libktx;
+
+ktxTexture2_SetTransferFunction :: (This: *ktxTexture2, tf: khr_df_transfer_e) -> ktx_error_code_e #foreign libktx;
+
+/* For backward compatibility. */
+ktxTexture2_SetOETF :: (This: *ktxTexture2, oetf: khr_df_transfer_e) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture2_SetPrimaries :: (This: *ktxTexture2, primaries: khr_df_primaries_e) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture2_LoadImageData :: (This: *ktxTexture2, pBuffer: *ktx_uint8_t, bufSize: ktx_size_t) -> ktx_error_code_e #foreign libktx;
+
+/*
+* For rare testing scenarios. Use ktxTexture2_LoadImageData.
+*/
+ktxTexture2_LoadDeflatedImageData :: (This: *ktxTexture2, pBuffer: *ktx_uint8_t, bufSize: ktx_size_t) -> ktx_error_code_e #foreign libktx;
+
+/*
+* These four write a ktxTexture2 object to a KTX v2 file.
+*/
+ktxTexture2_WriteToStdioStream :: (This: *ktxTexture2, dstsstr: *FILE) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture2_WriteToNamedFile :: (This: *ktxTexture2, dstname: *u8) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture2_WriteToMemory :: (This: *ktxTexture2, bytes: **ktx_uint8_t, size: *ktx_size_t) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture2_WriteToStream :: (This: *ktxTexture2, dststr: *ktxStream) -> ktx_error_code_e #foreign libktx;
+
+/**
+* @~English
+* @brief Flags specifiying UASTC encoding options.
+*/
+ktx_pack_uastc_flag_bits_e :: enum_flags u32 {
+    LEVEL_FASTEST                    :: 0x0;
+
+    LEVEL_FASTER                     :: 0x1;
+
+    LEVEL_DEFAULT                    :: 0x2;
+
+    LEVEL_SLOWER                     :: 0x3;
+
+    LEVEL_VERYSLOW                   :: 0x4;
+
+    MAX_LEVEL                        :: 0x4;
+
+    LEVEL_MASK                       :: 0xf;
+
+    FAVOR_UASTC_ERROR                :: 0x8;
+
+    FAVOR_BC7_ERROR                  :: 0x10;
+
+    ETC1_FASTER_HINTS                :: 0x40;
+
+    ETC1_FASTEST_HINTS               :: 0x80;
+
+    ETC1_DISABLE_FLIP_AND_INDIVIDUAL :: 0x100;
+
+    KTX_PACK_UASTC_LEVEL_FASTEST                     :: LEVEL_FASTEST;
+
+    KTX_PACK_UASTC_LEVEL_FASTER                      :: LEVEL_FASTER;
+
+    KTX_PACK_UASTC_LEVEL_DEFAULT                     :: LEVEL_DEFAULT;
+
+    KTX_PACK_UASTC_LEVEL_SLOWER                      :: LEVEL_SLOWER;
+
+    KTX_PACK_UASTC_LEVEL_VERYSLOW                    :: LEVEL_VERYSLOW;
+
+    KTX_PACK_UASTC_MAX_LEVEL                         :: MAX_LEVEL;
+
+    KTX_PACK_UASTC_LEVEL_MASK                        :: LEVEL_MASK;
+
+    KTX_PACK_UASTC_FAVOR_UASTC_ERROR                 :: FAVOR_UASTC_ERROR;
+
+    KTX_PACK_UASTC_FAVOR_BC7_ERROR                   :: FAVOR_BC7_ERROR;
+
+    KTX_PACK_UASTC_ETC1_FASTER_HINTS                 :: ETC1_FASTER_HINTS;
+
+    KTX_PACK_UASTC_ETC1_FASTEST_HINTS                :: ETC1_FASTEST_HINTS;
+
+    KTX_PACK_UASTC__ETC1_DISABLE_FLIP_AND_INDIVIDUAL :: ETC1_DISABLE_FLIP_AND_INDIVIDUAL;
+}
+
+ktx_pack_uastc_flags :: ktx_pack_uastc_flag_bits_e;
+
+/**
+* @~English
+* @brief Options specifiying ASTC encoding quality levels.
+*/
+ktx_pack_astc_quality_levels_e :: enum u32 {
+    FASTEST    :: 0;
+
+    FAST       :: 10;
+
+    MEDIUM     :: 60;
+
+    THOROUGH   :: 98;
+
+    EXHAUSTIVE :: 100;
+
+    MAX        :: 100;
+
+    KTX_PACK_ASTC_QUALITY_LEVEL_FASTEST    :: FASTEST;
+
+    KTX_PACK_ASTC_QUALITY_LEVEL_FAST       :: FAST;
+
+    KTX_PACK_ASTC_QUALITY_LEVEL_MEDIUM     :: MEDIUM;
+
+    KTX_PACK_ASTC_QUALITY_LEVEL_THOROUGH   :: THOROUGH;
+
+    KTX_PACK_ASTC_QUALITY_LEVEL_EXHAUSTIVE :: EXHAUSTIVE;
+
+    KTX_PACK_ASTC_QUALITY_LEVEL_MAX        :: MAX;
+}
+
+/**
+* @~English
+* @brief Options specifiying ASTC encoding block dimensions
+*/
+ktx_pack_astc_block_dimension_e :: enum u32 {
+    _4x4   :: 0;
+    _5x4   :: 1;
+    _5x5   :: 2;
+    _6x5   :: 3;
+    _6x6   :: 4;
+    _8x5   :: 5;
+    _8x6   :: 6;
+    _10x5  :: 7;
+    _10x6  :: 8;
+    _8x8   :: 9;
+    _10x8  :: 10;
+    _10x10 :: 11;
+    _12x10 :: 12;
+    _12x12 :: 13;
+
+    _3x3x3 :: 14;
+    _4x3x3 :: 15;
+    _4x4x3 :: 16;
+    _4x4x4 :: 17;
+    _5x4x4 :: 18;
+    _5x5x4 :: 19;
+    _5x5x5 :: 20;
+    _6x5x5 :: 21;
+    _6x6x5 :: 22;
+    _6x6x6 :: 23;
+    MAX    :: 23;
+
+    KTX_PACK_ASTC_BLOCK_DIMENSION_4x4   :: _4x4;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_5x4   :: _5x4;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_5x5   :: _5x5;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_6x5   :: _6x5;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_6x6   :: _6x6;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_8x5   :: _8x5;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_8x6   :: _8x6;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_10x5  :: _10x5;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_10x6  :: _10x6;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_8x8   :: _8x8;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_10x8  :: _10x8;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_10x10 :: _10x10;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_12x10 :: _12x10;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_12x12 :: _12x12;
+
+    KTX_PACK_ASTC_BLOCK_DIMENSION_3x3x3 :: _3x3x3;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_4x3x3 :: _4x3x3;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_4x4x3 :: _4x4x3;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_4x4x4 :: _4x4x4;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_5x4x4 :: _5x4x4;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_5x5x4 :: _5x5x4;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_5x5x5 :: _5x5x5;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_6x5x5 :: _6x5x5;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_6x6x5 :: _6x6x5;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_6x6x6 :: _6x6x6;
+    KTX_PACK_ASTC_BLOCK_DIMENSION_MAX   :: MAX;
+}
+
+/**
+* @~English
+* @brief Options specifying ASTC encoder profile mode
+*        This and function is used later to derive the profile.
+*/
+ktx_pack_astc_encoder_mode_e :: enum u32 {
+    DEFAULT :: 0;
+    LDR     :: 1;
+    HDR     :: 2;
+    MAX     :: 2;
+
+    KTX_PACK_ASTC_ENCODER_MODE_DEFAULT :: DEFAULT;
+    KTX_PACK_ASTC_ENCODER_MODE_LDR     :: LDR;
+    KTX_PACK_ASTC_ENCODER_MODE_HDR     :: HDR;
+    KTX_PACK_ASTC_ENCODER_MODE_MAX     :: MAX;
+}
+
+/**
+* @memberof ktxTexture
+* @~English
+* @brief Structure for passing extended parameters to
+*        ktxTexture_CompressAstc.
+*
+* Passing a struct initialized to 0 (e.g. " = {0};") will use blockDimension
+* 4x4, mode LDR and qualityLevel FASTEST. Setting qualityLevel to
+* KTX_PACK_ASTC_QUALITY_LEVEL_MEDIUM is recommended.
+*/
+ktxAstcParams :: struct {
+    structSize:     ktx_uint32_t;
+
+    verbose:        ktx_bool_t;
+
+    threadCount:    ktx_uint32_t;
+
+    /* astcenc params */
+    blockDimension: ktx_uint32_t;
+
+    mode:           ktx_uint32_t;
+
+    qualityLevel:   ktx_uint32_t;
+
+    normalMap:      ktx_bool_t;
+
+    perceptual:     ktx_bool_t;
+
+    inputSwizzle:   [4] u8;
+}
+
+ktxTexture2_CompressAstcEx :: (This: *ktxTexture2, params: *ktxAstcParams) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture2_CompressAstc :: (This: *ktxTexture2, quality: ktx_uint32_t) -> ktx_error_code_e #foreign libktx;
+
+ktxTexture2_DecodeAstc :: (This: *ktxTexture2) -> ktx_error_code_e #foreign libktx;
+
+/**
+* @memberof ktxTexture2
+* @~English
+* @brief Structure for passing extended parameters to
+*        ktxTexture2_CompressBasisEx().
+*
+* If you only want default values, use ktxTexture2_CompressBasis(). Here, at
+* a minimum you must initialize the structure as follows:
+* @code
+*  ktxBasisParams params = {0};
+*  params.structSize = sizeof(params);
+*  params.compressionLevel = KTX_ETC1S_DEFAULT_COMPRESSION_LEVEL;
+* @endcode
+*
+* @e compressionLevel has to be explicitly set because 0 is a valid
+* @e compressionLevel but is not the default used by the BasisU encoder
+* when no value is set. Only the other settings that are to be non-default
+* must be non-zero.
+*/
+ktxBasisParams :: struct {
+    structSize:                       ktx_uint32_t;
+
+    uastc:                            ktx_bool_t;
+
+    verbose:                          ktx_bool_t;
+
+    noSSE:                            ktx_bool_t;
+
+    threadCount:                      ktx_uint32_t;
+
+    /* ETC1S params */
+    compressionLevel:                 ktx_uint32_t;
+
+    qualityLevel:                     ktx_uint32_t;
+
+    maxEndpoints:                     ktx_uint32_t;
+
+    endpointRDOThreshold:             float;
+
+    maxSelectors:                     ktx_uint32_t;
+
+    selectorRDOThreshold:             float;
+
+    inputSwizzle:                     [4] u8;
+
+    normalMap:                        ktx_bool_t;
+
+    separateRGToRGB_A:                ktx_bool_t;
+
+    preSwizzle:                       ktx_bool_t;
+
+    noEndpointRDO:                    ktx_bool_t;
+
+    noSelectorRDO:                    ktx_bool_t;
+
+    /* UASTC params */
+    uastcFlags:                       ktx_pack_uastc_flags;
+
+    uastcRDO:                         ktx_bool_t;
+
+    uastcRDOQualityScalar:            float;
+
+    uastcRDODictSize:                 ktx_uint32_t;
+
+    uastcRDOMaxSmoothBlockErrorScale: float;
+
+    uastcRDOMaxSmoothBlockStdDev:     float;
+
+    uastcRDODontFavorSimplerModes:    ktx_bool_t;
+
+    uastcRDONoMultithreading:         ktx_bool_t;
+}
+
+ktxTexture2_CompressBasisEx :: (This: *ktxTexture2, params: *ktxBasisParams) -> ktx_error_code_e #foreign libktx;
+
+/**
+* @~English
+* @brief Enumerators for specifying the transcode target format.
+*
+* For BasisU/ETC1S format, @e Opaque and @e alpha here refer to 2 separate
+* RGB images, a.k.a slices within the BasisU compressed data. For UASTC
+* format they refer to the RGB and the alpha components of the UASTC data. If
+* the original image had only 2 components, R will be in the opaque portion
+* and G in the alpha portion. The R value will be replicated in the RGB
+* components. In the case of BasisU the G value will be replicated in all 3
+* components of the alpha slice. If the original image had only 1 component
+* it's value is replicated in all 3 components of the opaque portion and
+* there is no alpha.
+*
+* @note You should not transcode sRGB encoded data to @c KTX_TTF_BC4_R,
+* @c KTX_TTF_BC5_RG, @c KTX_TTF_ETC2_EAC_R{,G}11, @c KTX_TTF_RGB565,
+* @c KTX_TTF_BGR565 or @c KTX_TTF_RGBA4444 formats as neither OpenGL nor
+* Vulkan support sRGB variants of these. Doing sRGB decoding in the shader
+* will not produce correct results if any texture filtering is being used.
+*/
+ktx_transcode_fmt_e :: enum u32 {
+    TTF_ETC1_RGB            :: 0;
+
+    TTF_ETC2_RGBA           :: 1;
+
+    TTF_BC1_RGB             :: 2;
+
+    TTF_BC3_RGBA            :: 3;
+
+    TTF_BC4_R               :: 4;
+
+    TTF_BC5_RG              :: 5;
+
+    TTF_BC7_RGBA            :: 6;
+
+    TTF_PVRTC1_4_RGB        :: 8;
+
+    TTF_PVRTC1_4_RGBA       :: 9;
+
+    TTF_ASTC_4x4_RGBA       :: 10;
+
+    TTF_PVRTC2_4_RGB        :: 18;
+
+    TTF_PVRTC2_4_RGBA       :: 19;
+
+    TTF_ETC2_EAC_R11        :: 20;
+
+    TTF_ETC2_EAC_RG11       :: 21;
+
+    TTF_RGBA32              :: 13;
+
+    TTF_RGB565              :: 14;
+
+    TTF_BGR565              :: 15;
+
+    TTF_RGBA4444            :: 16;
+
+    TTF_ETC                 :: 22;
+
+    TTF_BC1_OR_3            :: 23;
+
+    TTF_NOSELECTION         :: 2147483647;
+
+    TF_ETC1                 :: 0;
+
+    TF_ETC2                 :: 22;
+
+    TF_BC1                  :: 2;
+
+    TF_BC3                  :: 3;
+
+    TF_BC4                  :: 4;
+
+    TF_BC5                  :: 5;
+
+    TTF_BC7_M6_RGB          :: 6;
+
+    TTF_BC7_M5_RGBA         :: 6;
+
+    TF_BC7_M6_OPAQUE_ONLY   :: 6;
+
+    TF_PVRTC1_4_OPAQUE_ONLY :: 8;
+
+    KTX_TTF_ETC1_RGB            :: TTF_ETC1_RGB;
+
+    KTX_TTF_ETC2_RGBA           :: TTF_ETC2_RGBA;
+
+    KTX_TTF_BC1_RGB             :: TTF_BC1_RGB;
+
+    KTX_TTF_BC3_RGBA            :: TTF_BC3_RGBA;
+
+    KTX_TTF_BC4_R               :: TTF_BC4_R;
+
+    KTX_TTF_BC5_RG              :: TTF_BC5_RG;
+
+    KTX_TTF_BC7_RGBA            :: TTF_BC7_RGBA;
+
+    KTX_TTF_PVRTC1_4_RGB        :: TTF_PVRTC1_4_RGB;
+
+    KTX_TTF_PVRTC1_4_RGBA       :: TTF_PVRTC1_4_RGBA;
+
+    KTX_TTF_ASTC_4x4_RGBA       :: TTF_ASTC_4x4_RGBA;
+
+    KTX_TTF_PVRTC2_4_RGB        :: TTF_PVRTC2_4_RGB;
+
+    KTX_TTF_PVRTC2_4_RGBA       :: TTF_PVRTC2_4_RGBA;
+
+    KTX_TTF_ETC2_EAC_R11        :: TTF_ETC2_EAC_R11;
+
+    KTX_TTF_ETC2_EAC_RG11       :: TTF_ETC2_EAC_RG11;
+
+    KTX_TTF_RGBA32              :: TTF_RGBA32;
+
+    KTX_TTF_RGB565              :: TTF_RGB565;
+
+    KTX_TTF_BGR565              :: TTF_BGR565;
+
+    KTX_TTF_RGBA4444            :: TTF_RGBA4444;
+
+    KTX_TTF_ETC                 :: TTF_ETC;
+
+    KTX_TTF_BC1_OR_3            :: TTF_BC1_OR_3;
+
+    KTX_TTF_NOSELECTION         :: TTF_NOSELECTION;
+
+    KTX_TF_ETC1                 :: TF_ETC1;
+
+    KTX_TF_ETC2                 :: TF_ETC2;
+
+    KTX_TF_BC1                  :: TF_BC1;
+
+    KTX_TF_BC3                  :: TF_BC3;
+
+    KTX_TF_BC4                  :: TF_BC4;
+
+    KTX_TF_BC5                  :: TF_BC5;
+
+    KTX_TTF_BC7_M6_RGB          :: TTF_BC7_M6_RGB;
+
+    KTX_TTF_BC7_M5_RGBA         :: TTF_BC7_M5_RGBA;
+
+    KTX_TF_BC7_M6_OPAQUE_ONLY   :: TF_BC7_M6_OPAQUE_ONLY;
+
+    KTX_TF_PVRTC1_4_OPAQUE_ONLY :: TF_PVRTC1_4_OPAQUE_ONLY;
+}
+
+/**
+* @~English
+* @brief Flags guiding transcoding of Basis Universal compressed textures.
+*/
+ktx_transcode_flag_bits_e :: enum_flags u32 {
+    PVRTC_DECODE_TO_NEXT_POW2              :: 0x2;
+
+    TRANSCODE_ALPHA_DATA_TO_OPAQUE_FORMATS :: 0x4;
+
+    HIGH_QUALITY                           :: 0x20;
+
+    KTX_TF_PVRTC_DECODE_TO_NEXT_POW2              :: PVRTC_DECODE_TO_NEXT_POW2;
+
+    KTX_TF_TRANSCODE_ALPHA_DATA_TO_OPAQUE_FORMATS :: TRANSCODE_ALPHA_DATA_TO_OPAQUE_FORMATS;
+
+    KTX_TF_HIGH_QUALITY                           :: HIGH_QUALITY;
+}
+
+ktx_transcode_flags :: ktx_transcode_flag_bits_e;
+
+ktxTexture2_TranscodeBasis :: (This: *ktxTexture2, fmt: ktx_transcode_fmt_e, transcodeFlags: ktx_transcode_flags) -> ktx_error_code_e #foreign libktx;
+
+/*
+* Returns a string corresponding to a KTX error code.
+*/
+ktxErrorString :: (error: ktx_error_code_e) -> *u8 #foreign libktx;
+
+/*
+* Returns a string corresponding to a supercompression scheme.
+*/
+ktxSupercompressionSchemeString :: (scheme: ktxSupercmpScheme) -> *u8 #foreign libktx;
+
+/*
+* Returns a string corresponding to a transcode target format.
+*/
+ktxTranscodeFormatString :: (format: ktx_transcode_fmt_e) -> *u8 #foreign libktx;
+
+ktxHashList_Create :: (ppHl: **ktxHashList) -> ktx_error_code_e #foreign libktx;
+
+ktxHashList_CreateCopy :: (ppHl: **ktxHashList, orig: ktxHashList) -> ktx_error_code_e #foreign libktx;
+ktxHashList_Construct :: (pHl: *ktxHashList) -> void #foreign libktx;
+
+ktxHashList_ConstructCopy :: (pHl: *ktxHashList, orig: ktxHashList) -> void #foreign libktx;
+ktxHashList_Destroy :: (head: *ktxHashList) -> void #foreign libktx;
+ktxHashList_Destruct :: (head: *ktxHashList) -> void #foreign libktx;
+
+/*
+* Adds a key-value pair to a hash list.
+*/
+ktxHashList_AddKVPair :: (pHead: *ktxHashList, key: *u8, valueLen: u32, value: *void) -> ktx_error_code_e #foreign libktx;
+
+/*
+* Deletes a ktxHashListEntry from a ktxHashList.
+*/
+ktxHashList_DeleteEntry :: (pHead: *ktxHashList, pEntry: *ktxHashListEntry) -> ktx_error_code_e #foreign libktx;
+
+/*
+* Finds the entry for a key in a ktxHashList and deletes it.
+*/
+ktxHashList_DeleteKVPair :: (pHead: *ktxHashList, key: *u8) -> ktx_error_code_e #foreign libktx;
+
+/*
+* Looks up a key and returns the ktxHashListEntry.
+*/
+ktxHashList_FindEntry :: (pHead: *ktxHashList, key: *u8, ppEntry: **ktxHashListEntry) -> ktx_error_code_e #foreign libktx;
+
+/*
+* Looks up a key and returns the value.
+*/
+ktxHashList_FindValue :: (pHead: *ktxHashList, key: *u8, pValueLen: *u32, pValue: **void) -> ktx_error_code_e #foreign libktx;
+
+/*
+* Return the next entry in a ktxHashList.
+*/
+ktxHashList_Next :: (entry: *ktxHashListEntry) -> *ktxHashListEntry #foreign libktx;
+
+/*
+* Sorts a ktxHashList into order of the key codepoints.
+*/
+ktxHashList_Sort :: (pHead: *ktxHashList) -> ktx_error_code_e #foreign libktx;
+
+/*
+* Serializes a ktxHashList to a block of memory suitable for
+* writing to a KTX file.
+*/
+ktxHashList_Serialize :: (pHead: *ktxHashList, kvdLen: *u32, kvd: **u8) -> ktx_error_code_e #foreign libktx;
+
+/*
+* Creates a hash table from the serialized data read from a
+* a KTX file.
+*/
+ktxHashList_Deserialize :: (pHead: *ktxHashList, kvdLen: u32, kvd: *void) -> ktx_error_code_e #foreign libktx;
+
+/*
+* Get the key from a ktxHashListEntry
+*/
+ktxHashListEntry_GetKey :: (This: *ktxHashListEntry, pKeyLen: *u32, ppKey: **u8) -> ktx_error_code_e #foreign libktx;
+
+/*
+* Get the value from a ktxHashListEntry
+*/
+ktxHashListEntry_GetValue :: (This: *ktxHashListEntry, pValueLen: *u32, ppValue: **void) -> ktx_error_code_e #foreign libktx;
+
+/*===========================================================*
+* Utilities for printing info about a KTX file.             *
+*===========================================================*/
+ktxPrintInfoForStdioStream :: (stdioStream: *FILE) -> ktx_error_code_e #foreign libktx;
+ktxPrintInfoForNamedFile :: (filename: *u8) -> ktx_error_code_e #foreign libktx;
+ktxPrintInfoForMemory :: (bytes: *ktx_uint8_t, size: ktx_size_t) -> ktx_error_code_e #foreign libktx;
+
+/*===========================================================*
+* Utilities for printing info about a KTX2 file.            *
+*===========================================================*/
+ktxPrintKTX2InfoTextForMemory :: (bytes: *ktx_uint8_t, size: ktx_size_t) -> ktx_error_code_e #foreign libktx;
+ktxPrintKTX2InfoTextForNamedFile :: (filename: *u8) -> ktx_error_code_e #foreign libktx;
+ktxPrintKTX2InfoTextForStdioStream :: (stdioStream: *FILE) -> ktx_error_code_e #foreign libktx;
+ktxPrintKTX2InfoTextForStream :: (stream: *ktxStream) -> ktx_error_code_e #foreign libktx;
+ktxPrintKTX2InfoJSONForMemory :: (bytes: *ktx_uint8_t, size: ktx_size_t, base_indent: ktx_uint32_t, indent_width: ktx_uint32_t, minified: bool) -> ktx_error_code_e #foreign libktx;
+ktxPrintKTX2InfoJSONForNamedFile :: (filename: *u8, base_indent: ktx_uint32_t, indent_width: ktx_uint32_t, minified: bool) -> ktx_error_code_e #foreign libktx;
+ktxPrintKTX2InfoJSONForStdioStream :: (stdioStream: *FILE, base_indent: ktx_uint32_t, indent_width: ktx_uint32_t, minified: bool) -> ktx_error_code_e #foreign libktx;
+ktxPrintKTX2InfoJSONForStream :: (stream: *ktxStream, base_indent: ktx_uint32_t, indent_width: ktx_uint32_t, minified: bool) -> ktx_error_code_e #foreign libktx;
+
+#scope_file
+
+#import "Basic"; // For assert
+
+libktx :: #library "android/libktx";
+
+#run {
+    {
+        info := type_info(ktxOrientation);
+        for info.members {
+            if it.name == {
+                case "x";
+                    assert(it.offset_in_bytes == 0, "ktxOrientation.x has unexpected offset % instead of 0", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxOrientation.x has unexpected size % instead of 4", it.type.runtime_size);
+                case "y";
+                    assert(it.offset_in_bytes == 4, "ktxOrientation.y has unexpected offset % instead of 4", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxOrientation.y has unexpected size % instead of 4", it.type.runtime_size);
+                case "z";
+                    assert(it.offset_in_bytes == 8, "ktxOrientation.z has unexpected offset % instead of 8", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxOrientation.z has unexpected size % instead of 4", it.type.runtime_size);
+            }
+        }
+        assert(size_of(ktxOrientation) == 12, "ktxOrientation has size % instead of 12", size_of(ktxOrientation));
+    }
+
+    {
+        info := type_info(ktxTexture);
+        for info.members {
+            if it.name == {
+                case "classId";
+                    assert(it.offset_in_bytes == 0, "ktxTexture.classId has unexpected offset % instead of 0", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture.classId has unexpected size % instead of 4", it.type.runtime_size);
+                case "vtbl";
+                    assert(it.offset_in_bytes == 8, "ktxTexture.vtbl has unexpected offset % instead of 8", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture.vtbl has unexpected size % instead of 8", it.type.runtime_size);
+                case "vvtbl";
+                    assert(it.offset_in_bytes == 16, "ktxTexture.vvtbl has unexpected offset % instead of 16", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture.vvtbl has unexpected size % instead of 8", it.type.runtime_size);
+                case "_protected";
+                    assert(it.offset_in_bytes == 24, "ktxTexture._protected has unexpected offset % instead of 24", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture._protected has unexpected size % instead of 8", it.type.runtime_size);
+                case "isArray";
+                    assert(it.offset_in_bytes == 32, "ktxTexture.isArray has unexpected offset % instead of 32", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxTexture.isArray has unexpected size % instead of 1", it.type.runtime_size);
+                case "isCubemap";
+                    assert(it.offset_in_bytes == 33, "ktxTexture.isCubemap has unexpected offset % instead of 33", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxTexture.isCubemap has unexpected size % instead of 1", it.type.runtime_size);
+                case "isCompressed";
+                    assert(it.offset_in_bytes == 34, "ktxTexture.isCompressed has unexpected offset % instead of 34", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxTexture.isCompressed has unexpected size % instead of 1", it.type.runtime_size);
+                case "generateMipmaps";
+                    assert(it.offset_in_bytes == 35, "ktxTexture.generateMipmaps has unexpected offset % instead of 35", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxTexture.generateMipmaps has unexpected size % instead of 1", it.type.runtime_size);
+                case "baseWidth";
+                    assert(it.offset_in_bytes == 36, "ktxTexture.baseWidth has unexpected offset % instead of 36", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture.baseWidth has unexpected size % instead of 4", it.type.runtime_size);
+                case "baseHeight";
+                    assert(it.offset_in_bytes == 40, "ktxTexture.baseHeight has unexpected offset % instead of 40", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture.baseHeight has unexpected size % instead of 4", it.type.runtime_size);
+                case "baseDepth";
+                    assert(it.offset_in_bytes == 44, "ktxTexture.baseDepth has unexpected offset % instead of 44", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture.baseDepth has unexpected size % instead of 4", it.type.runtime_size);
+                case "numDimensions";
+                    assert(it.offset_in_bytes == 48, "ktxTexture.numDimensions has unexpected offset % instead of 48", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture.numDimensions has unexpected size % instead of 4", it.type.runtime_size);
+                case "numLevels";
+                    assert(it.offset_in_bytes == 52, "ktxTexture.numLevels has unexpected offset % instead of 52", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture.numLevels has unexpected size % instead of 4", it.type.runtime_size);
+                case "numLayers";
+                    assert(it.offset_in_bytes == 56, "ktxTexture.numLayers has unexpected offset % instead of 56", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture.numLayers has unexpected size % instead of 4", it.type.runtime_size);
+                case "numFaces";
+                    assert(it.offset_in_bytes == 60, "ktxTexture.numFaces has unexpected offset % instead of 60", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture.numFaces has unexpected size % instead of 4", it.type.runtime_size);
+                case "orientation";
+                    assert(it.offset_in_bytes == 64, "ktxTexture.orientation has unexpected offset % instead of 64", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 12, "ktxTexture.orientation has unexpected size % instead of 12", it.type.runtime_size);
+                case "kvDataHead";
+                    assert(it.offset_in_bytes == 80, "ktxTexture.kvDataHead has unexpected offset % instead of 80", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture.kvDataHead has unexpected size % instead of 8", it.type.runtime_size);
+                case "kvDataLen";
+                    assert(it.offset_in_bytes == 88, "ktxTexture.kvDataLen has unexpected offset % instead of 88", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture.kvDataLen has unexpected size % instead of 4", it.type.runtime_size);
+                case "kvData";
+                    assert(it.offset_in_bytes == 96, "ktxTexture.kvData has unexpected offset % instead of 96", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture.kvData has unexpected size % instead of 8", it.type.runtime_size);
+                case "dataSize";
+                    assert(it.offset_in_bytes == 104, "ktxTexture.dataSize has unexpected offset % instead of 104", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture.dataSize has unexpected size % instead of 8", it.type.runtime_size);
+                case "pData";
+                    assert(it.offset_in_bytes == 112, "ktxTexture.pData has unexpected offset % instead of 112", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture.pData has unexpected size % instead of 8", it.type.runtime_size);
+            }
+        }
+        assert(size_of(ktxTexture) == 120, "ktxTexture has size % instead of 120", size_of(ktxTexture));
+    }
+
+    {
+        info := type_info(ktxTexture_vtbl);
+        for info.members {
+            if it.name == {
+                case "Destroy";
+                    assert(it.offset_in_bytes == 0, "ktxTexture_vtbl.Destroy has unexpected offset % instead of 0", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture_vtbl.Destroy has unexpected size % instead of 8", it.type.runtime_size);
+                case "GetImageOffset";
+                    assert(it.offset_in_bytes == 8, "ktxTexture_vtbl.GetImageOffset has unexpected offset % instead of 8", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture_vtbl.GetImageOffset has unexpected size % instead of 8", it.type.runtime_size);
+                case "GetDataSizeUncompressed";
+                    assert(it.offset_in_bytes == 16, "ktxTexture_vtbl.GetDataSizeUncompressed has unexpected offset % instead of 16", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture_vtbl.GetDataSizeUncompressed has unexpected size % instead of 8", it.type.runtime_size);
+                case "GetImageSize";
+                    assert(it.offset_in_bytes == 24, "ktxTexture_vtbl.GetImageSize has unexpected offset % instead of 24", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture_vtbl.GetImageSize has unexpected size % instead of 8", it.type.runtime_size);
+                case "GetLevelSize";
+                    assert(it.offset_in_bytes == 32, "ktxTexture_vtbl.GetLevelSize has unexpected offset % instead of 32", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture_vtbl.GetLevelSize has unexpected size % instead of 8", it.type.runtime_size);
+                case "IterateLevels";
+                    assert(it.offset_in_bytes == 40, "ktxTexture_vtbl.IterateLevels has unexpected offset % instead of 40", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture_vtbl.IterateLevels has unexpected size % instead of 8", it.type.runtime_size);
+                case "IterateLoadLevelFaces";
+                    assert(it.offset_in_bytes == 48, "ktxTexture_vtbl.IterateLoadLevelFaces has unexpected offset % instead of 48", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture_vtbl.IterateLoadLevelFaces has unexpected size % instead of 8", it.type.runtime_size);
+                case "NeedsTranscoding";
+                    assert(it.offset_in_bytes == 56, "ktxTexture_vtbl.NeedsTranscoding has unexpected offset % instead of 56", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture_vtbl.NeedsTranscoding has unexpected size % instead of 8", it.type.runtime_size);
+                case "LoadImageData";
+                    assert(it.offset_in_bytes == 64, "ktxTexture_vtbl.LoadImageData has unexpected offset % instead of 64", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture_vtbl.LoadImageData has unexpected size % instead of 8", it.type.runtime_size);
+                case "SetImageFromMemory";
+                    assert(it.offset_in_bytes == 72, "ktxTexture_vtbl.SetImageFromMemory has unexpected offset % instead of 72", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture_vtbl.SetImageFromMemory has unexpected size % instead of 8", it.type.runtime_size);
+                case "SetImageFromStdioStream";
+                    assert(it.offset_in_bytes == 80, "ktxTexture_vtbl.SetImageFromStdioStream has unexpected offset % instead of 80", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture_vtbl.SetImageFromStdioStream has unexpected size % instead of 8", it.type.runtime_size);
+                case "WriteToStdioStream";
+                    assert(it.offset_in_bytes == 88, "ktxTexture_vtbl.WriteToStdioStream has unexpected offset % instead of 88", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture_vtbl.WriteToStdioStream has unexpected size % instead of 8", it.type.runtime_size);
+                case "WriteToNamedFile";
+                    assert(it.offset_in_bytes == 96, "ktxTexture_vtbl.WriteToNamedFile has unexpected offset % instead of 96", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture_vtbl.WriteToNamedFile has unexpected size % instead of 8", it.type.runtime_size);
+                case "WriteToMemory";
+                    assert(it.offset_in_bytes == 104, "ktxTexture_vtbl.WriteToMemory has unexpected offset % instead of 104", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture_vtbl.WriteToMemory has unexpected size % instead of 8", it.type.runtime_size);
+                case "WriteToStream";
+                    assert(it.offset_in_bytes == 112, "ktxTexture_vtbl.WriteToStream has unexpected offset % instead of 112", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture_vtbl.WriteToStream has unexpected size % instead of 8", it.type.runtime_size);
+            }
+        }
+        assert(size_of(ktxTexture_vtbl) == 120, "ktxTexture_vtbl has size % instead of 120", size_of(ktxTexture_vtbl));
+    }
+
+    {
+        info := type_info(ktxTexture1);
+        for info.members {
+            if it.name == {
+                case "classId";
+                    assert(it.offset_in_bytes == 0, "ktxTexture1.classId has unexpected offset % instead of 0", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture1.classId has unexpected size % instead of 4", it.type.runtime_size);
+                case "vtbl";
+                    assert(it.offset_in_bytes == 8, "ktxTexture1.vtbl has unexpected offset % instead of 8", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture1.vtbl has unexpected size % instead of 8", it.type.runtime_size);
+                case "vvtbl";
+                    assert(it.offset_in_bytes == 16, "ktxTexture1.vvtbl has unexpected offset % instead of 16", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture1.vvtbl has unexpected size % instead of 8", it.type.runtime_size);
+                case "_protected";
+                    assert(it.offset_in_bytes == 24, "ktxTexture1._protected has unexpected offset % instead of 24", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture1._protected has unexpected size % instead of 8", it.type.runtime_size);
+                case "isArray";
+                    assert(it.offset_in_bytes == 32, "ktxTexture1.isArray has unexpected offset % instead of 32", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxTexture1.isArray has unexpected size % instead of 1", it.type.runtime_size);
+                case "isCubemap";
+                    assert(it.offset_in_bytes == 33, "ktxTexture1.isCubemap has unexpected offset % instead of 33", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxTexture1.isCubemap has unexpected size % instead of 1", it.type.runtime_size);
+                case "isCompressed";
+                    assert(it.offset_in_bytes == 34, "ktxTexture1.isCompressed has unexpected offset % instead of 34", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxTexture1.isCompressed has unexpected size % instead of 1", it.type.runtime_size);
+                case "generateMipmaps";
+                    assert(it.offset_in_bytes == 35, "ktxTexture1.generateMipmaps has unexpected offset % instead of 35", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxTexture1.generateMipmaps has unexpected size % instead of 1", it.type.runtime_size);
+                case "baseWidth";
+                    assert(it.offset_in_bytes == 36, "ktxTexture1.baseWidth has unexpected offset % instead of 36", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture1.baseWidth has unexpected size % instead of 4", it.type.runtime_size);
+                case "baseHeight";
+                    assert(it.offset_in_bytes == 40, "ktxTexture1.baseHeight has unexpected offset % instead of 40", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture1.baseHeight has unexpected size % instead of 4", it.type.runtime_size);
+                case "baseDepth";
+                    assert(it.offset_in_bytes == 44, "ktxTexture1.baseDepth has unexpected offset % instead of 44", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture1.baseDepth has unexpected size % instead of 4", it.type.runtime_size);
+                case "numDimensions";
+                    assert(it.offset_in_bytes == 48, "ktxTexture1.numDimensions has unexpected offset % instead of 48", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture1.numDimensions has unexpected size % instead of 4", it.type.runtime_size);
+                case "numLevels";
+                    assert(it.offset_in_bytes == 52, "ktxTexture1.numLevels has unexpected offset % instead of 52", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture1.numLevels has unexpected size % instead of 4", it.type.runtime_size);
+                case "numLayers";
+                    assert(it.offset_in_bytes == 56, "ktxTexture1.numLayers has unexpected offset % instead of 56", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture1.numLayers has unexpected size % instead of 4", it.type.runtime_size);
+                case "numFaces";
+                    assert(it.offset_in_bytes == 60, "ktxTexture1.numFaces has unexpected offset % instead of 60", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture1.numFaces has unexpected size % instead of 4", it.type.runtime_size);
+                case "orientation";
+                    assert(it.offset_in_bytes == 64, "ktxTexture1.orientation has unexpected offset % instead of 64", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 12, "ktxTexture1.orientation has unexpected size % instead of 12", it.type.runtime_size);
+                case "kvDataHead";
+                    assert(it.offset_in_bytes == 80, "ktxTexture1.kvDataHead has unexpected offset % instead of 80", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture1.kvDataHead has unexpected size % instead of 8", it.type.runtime_size);
+                case "kvDataLen";
+                    assert(it.offset_in_bytes == 88, "ktxTexture1.kvDataLen has unexpected offset % instead of 88", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture1.kvDataLen has unexpected size % instead of 4", it.type.runtime_size);
+                case "kvData";
+                    assert(it.offset_in_bytes == 96, "ktxTexture1.kvData has unexpected offset % instead of 96", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture1.kvData has unexpected size % instead of 8", it.type.runtime_size);
+                case "dataSize";
+                    assert(it.offset_in_bytes == 104, "ktxTexture1.dataSize has unexpected offset % instead of 104", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture1.dataSize has unexpected size % instead of 8", it.type.runtime_size);
+                case "pData";
+                    assert(it.offset_in_bytes == 112, "ktxTexture1.pData has unexpected offset % instead of 112", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture1.pData has unexpected size % instead of 8", it.type.runtime_size);
+                case "glFormat";
+                    assert(it.offset_in_bytes == 120, "ktxTexture1.glFormat has unexpected offset % instead of 120", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture1.glFormat has unexpected size % instead of 4", it.type.runtime_size);
+                case "glInternalformat";
+                    assert(it.offset_in_bytes == 124, "ktxTexture1.glInternalformat has unexpected offset % instead of 124", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture1.glInternalformat has unexpected size % instead of 4", it.type.runtime_size);
+                case "glBaseInternalformat";
+                    assert(it.offset_in_bytes == 128, "ktxTexture1.glBaseInternalformat has unexpected offset % instead of 128", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture1.glBaseInternalformat has unexpected size % instead of 4", it.type.runtime_size);
+                case "glType";
+                    assert(it.offset_in_bytes == 132, "ktxTexture1.glType has unexpected offset % instead of 132", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture1.glType has unexpected size % instead of 4", it.type.runtime_size);
+                case "_private";
+                    assert(it.offset_in_bytes == 136, "ktxTexture1._private has unexpected offset % instead of 136", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture1._private has unexpected size % instead of 8", it.type.runtime_size);
+            }
+        }
+        assert(size_of(ktxTexture1) == 144, "ktxTexture1 has size % instead of 144", size_of(ktxTexture1));
+    }
+
+    {
+        info := type_info(ktxTexture2);
+        for info.members {
+            if it.name == {
+                case "classId";
+                    assert(it.offset_in_bytes == 0, "ktxTexture2.classId has unexpected offset % instead of 0", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture2.classId has unexpected size % instead of 4", it.type.runtime_size);
+                case "vtbl";
+                    assert(it.offset_in_bytes == 8, "ktxTexture2.vtbl has unexpected offset % instead of 8", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture2.vtbl has unexpected size % instead of 8", it.type.runtime_size);
+                case "vvtbl";
+                    assert(it.offset_in_bytes == 16, "ktxTexture2.vvtbl has unexpected offset % instead of 16", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture2.vvtbl has unexpected size % instead of 8", it.type.runtime_size);
+                case "_protected";
+                    assert(it.offset_in_bytes == 24, "ktxTexture2._protected has unexpected offset % instead of 24", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture2._protected has unexpected size % instead of 8", it.type.runtime_size);
+                case "isArray";
+                    assert(it.offset_in_bytes == 32, "ktxTexture2.isArray has unexpected offset % instead of 32", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxTexture2.isArray has unexpected size % instead of 1", it.type.runtime_size);
+                case "isCubemap";
+                    assert(it.offset_in_bytes == 33, "ktxTexture2.isCubemap has unexpected offset % instead of 33", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxTexture2.isCubemap has unexpected size % instead of 1", it.type.runtime_size);
+                case "isCompressed";
+                    assert(it.offset_in_bytes == 34, "ktxTexture2.isCompressed has unexpected offset % instead of 34", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxTexture2.isCompressed has unexpected size % instead of 1", it.type.runtime_size);
+                case "generateMipmaps";
+                    assert(it.offset_in_bytes == 35, "ktxTexture2.generateMipmaps has unexpected offset % instead of 35", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxTexture2.generateMipmaps has unexpected size % instead of 1", it.type.runtime_size);
+                case "baseWidth";
+                    assert(it.offset_in_bytes == 36, "ktxTexture2.baseWidth has unexpected offset % instead of 36", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture2.baseWidth has unexpected size % instead of 4", it.type.runtime_size);
+                case "baseHeight";
+                    assert(it.offset_in_bytes == 40, "ktxTexture2.baseHeight has unexpected offset % instead of 40", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture2.baseHeight has unexpected size % instead of 4", it.type.runtime_size);
+                case "baseDepth";
+                    assert(it.offset_in_bytes == 44, "ktxTexture2.baseDepth has unexpected offset % instead of 44", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture2.baseDepth has unexpected size % instead of 4", it.type.runtime_size);
+                case "numDimensions";
+                    assert(it.offset_in_bytes == 48, "ktxTexture2.numDimensions has unexpected offset % instead of 48", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture2.numDimensions has unexpected size % instead of 4", it.type.runtime_size);
+                case "numLevels";
+                    assert(it.offset_in_bytes == 52, "ktxTexture2.numLevels has unexpected offset % instead of 52", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture2.numLevels has unexpected size % instead of 4", it.type.runtime_size);
+                case "numLayers";
+                    assert(it.offset_in_bytes == 56, "ktxTexture2.numLayers has unexpected offset % instead of 56", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture2.numLayers has unexpected size % instead of 4", it.type.runtime_size);
+                case "numFaces";
+                    assert(it.offset_in_bytes == 60, "ktxTexture2.numFaces has unexpected offset % instead of 60", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture2.numFaces has unexpected size % instead of 4", it.type.runtime_size);
+                case "orientation";
+                    assert(it.offset_in_bytes == 64, "ktxTexture2.orientation has unexpected offset % instead of 64", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 12, "ktxTexture2.orientation has unexpected size % instead of 12", it.type.runtime_size);
+                case "kvDataHead";
+                    assert(it.offset_in_bytes == 80, "ktxTexture2.kvDataHead has unexpected offset % instead of 80", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture2.kvDataHead has unexpected size % instead of 8", it.type.runtime_size);
+                case "kvDataLen";
+                    assert(it.offset_in_bytes == 88, "ktxTexture2.kvDataLen has unexpected offset % instead of 88", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture2.kvDataLen has unexpected size % instead of 4", it.type.runtime_size);
+                case "kvData";
+                    assert(it.offset_in_bytes == 96, "ktxTexture2.kvData has unexpected offset % instead of 96", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture2.kvData has unexpected size % instead of 8", it.type.runtime_size);
+                case "dataSize";
+                    assert(it.offset_in_bytes == 104, "ktxTexture2.dataSize has unexpected offset % instead of 104", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture2.dataSize has unexpected size % instead of 8", it.type.runtime_size);
+                case "pData";
+                    assert(it.offset_in_bytes == 112, "ktxTexture2.pData has unexpected offset % instead of 112", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture2.pData has unexpected size % instead of 8", it.type.runtime_size);
+                case "vkFormat";
+                    assert(it.offset_in_bytes == 120, "ktxTexture2.vkFormat has unexpected offset % instead of 120", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture2.vkFormat has unexpected size % instead of 4", it.type.runtime_size);
+                case "pDfd";
+                    assert(it.offset_in_bytes == 128, "ktxTexture2.pDfd has unexpected offset % instead of 128", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture2.pDfd has unexpected size % instead of 8", it.type.runtime_size);
+                case "supercompressionScheme";
+                    assert(it.offset_in_bytes == 136, "ktxTexture2.supercompressionScheme has unexpected offset % instead of 136", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture2.supercompressionScheme has unexpected size % instead of 4", it.type.runtime_size);
+                case "isVideo";
+                    assert(it.offset_in_bytes == 140, "ktxTexture2.isVideo has unexpected offset % instead of 140", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxTexture2.isVideo has unexpected size % instead of 1", it.type.runtime_size);
+                case "duration";
+                    assert(it.offset_in_bytes == 144, "ktxTexture2.duration has unexpected offset % instead of 144", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture2.duration has unexpected size % instead of 4", it.type.runtime_size);
+                case "timescale";
+                    assert(it.offset_in_bytes == 148, "ktxTexture2.timescale has unexpected offset % instead of 148", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture2.timescale has unexpected size % instead of 4", it.type.runtime_size);
+                case "loopcount";
+                    assert(it.offset_in_bytes == 152, "ktxTexture2.loopcount has unexpected offset % instead of 152", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTexture2.loopcount has unexpected size % instead of 4", it.type.runtime_size);
+                case "_private";
+                    assert(it.offset_in_bytes == 160, "ktxTexture2._private has unexpected offset % instead of 160", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTexture2._private has unexpected size % instead of 8", it.type.runtime_size);
+            }
+        }
+        assert(size_of(ktxTexture2) == 168, "ktxTexture2 has size % instead of 168", size_of(ktxTexture2));
+    }
+
+    {
+        info := type_info(ktxTextureCreateInfo);
+        for info.members {
+            if it.name == {
+                case "glInternalformat";
+                    assert(it.offset_in_bytes == 0, "ktxTextureCreateInfo.glInternalformat has unexpected offset % instead of 0", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTextureCreateInfo.glInternalformat has unexpected size % instead of 4", it.type.runtime_size);
+                case "vkFormat";
+                    assert(it.offset_in_bytes == 4, "ktxTextureCreateInfo.vkFormat has unexpected offset % instead of 4", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTextureCreateInfo.vkFormat has unexpected size % instead of 4", it.type.runtime_size);
+                case "pDfd";
+                    assert(it.offset_in_bytes == 8, "ktxTextureCreateInfo.pDfd has unexpected offset % instead of 8", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxTextureCreateInfo.pDfd has unexpected size % instead of 8", it.type.runtime_size);
+                case "baseWidth";
+                    assert(it.offset_in_bytes == 16, "ktxTextureCreateInfo.baseWidth has unexpected offset % instead of 16", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTextureCreateInfo.baseWidth has unexpected size % instead of 4", it.type.runtime_size);
+                case "baseHeight";
+                    assert(it.offset_in_bytes == 20, "ktxTextureCreateInfo.baseHeight has unexpected offset % instead of 20", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTextureCreateInfo.baseHeight has unexpected size % instead of 4", it.type.runtime_size);
+                case "baseDepth";
+                    assert(it.offset_in_bytes == 24, "ktxTextureCreateInfo.baseDepth has unexpected offset % instead of 24", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTextureCreateInfo.baseDepth has unexpected size % instead of 4", it.type.runtime_size);
+                case "numDimensions";
+                    assert(it.offset_in_bytes == 28, "ktxTextureCreateInfo.numDimensions has unexpected offset % instead of 28", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTextureCreateInfo.numDimensions has unexpected size % instead of 4", it.type.runtime_size);
+                case "numLevels";
+                    assert(it.offset_in_bytes == 32, "ktxTextureCreateInfo.numLevels has unexpected offset % instead of 32", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTextureCreateInfo.numLevels has unexpected size % instead of 4", it.type.runtime_size);
+                case "numLayers";
+                    assert(it.offset_in_bytes == 36, "ktxTextureCreateInfo.numLayers has unexpected offset % instead of 36", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTextureCreateInfo.numLayers has unexpected size % instead of 4", it.type.runtime_size);
+                case "numFaces";
+                    assert(it.offset_in_bytes == 40, "ktxTextureCreateInfo.numFaces has unexpected offset % instead of 40", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxTextureCreateInfo.numFaces has unexpected size % instead of 4", it.type.runtime_size);
+                case "isArray";
+                    assert(it.offset_in_bytes == 44, "ktxTextureCreateInfo.isArray has unexpected offset % instead of 44", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxTextureCreateInfo.isArray has unexpected size % instead of 1", it.type.runtime_size);
+                case "generateMipmaps";
+                    assert(it.offset_in_bytes == 45, "ktxTextureCreateInfo.generateMipmaps has unexpected offset % instead of 45", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxTextureCreateInfo.generateMipmaps has unexpected size % instead of 1", it.type.runtime_size);
+            }
+        }
+        assert(size_of(ktxTextureCreateInfo) == 48, "ktxTextureCreateInfo has size % instead of 48", size_of(ktxTextureCreateInfo));
+    }
+
+    {
+        info := type_info(ktxStream);
+        for info.members {
+            if it.name == {
+                case "read";
+                    assert(it.offset_in_bytes == 0, "ktxStream.read has unexpected offset % instead of 0", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxStream.read has unexpected size % instead of 8", it.type.runtime_size);
+                case "skip";
+                    assert(it.offset_in_bytes == 8, "ktxStream.skip has unexpected offset % instead of 8", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxStream.skip has unexpected size % instead of 8", it.type.runtime_size);
+                case "write";
+                    assert(it.offset_in_bytes == 16, "ktxStream.write has unexpected offset % instead of 16", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxStream.write has unexpected size % instead of 8", it.type.runtime_size);
+                case "getpos";
+                    assert(it.offset_in_bytes == 24, "ktxStream.getpos has unexpected offset % instead of 24", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxStream.getpos has unexpected size % instead of 8", it.type.runtime_size);
+                case "setpos";
+                    assert(it.offset_in_bytes == 32, "ktxStream.setpos has unexpected offset % instead of 32", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxStream.setpos has unexpected size % instead of 8", it.type.runtime_size);
+                case "getsize";
+                    assert(it.offset_in_bytes == 40, "ktxStream.getsize has unexpected offset % instead of 40", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxStream.getsize has unexpected size % instead of 8", it.type.runtime_size);
+                case "destruct";
+                    assert(it.offset_in_bytes == 48, "ktxStream.destruct has unexpected offset % instead of 48", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxStream.destruct has unexpected size % instead of 8", it.type.runtime_size);
+                case "type";
+                    assert(it.offset_in_bytes == 56, "ktxStream.type has unexpected offset % instead of 56", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxStream.type has unexpected size % instead of 4", it.type.runtime_size);
+                case "data";
+                    assert(it.offset_in_bytes == 64, "ktxStream.data has unexpected offset % instead of 64", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 24, "ktxStream.data has unexpected size % instead of 24", it.type.runtime_size);
+                case "readpos";
+                    assert(it.offset_in_bytes == 88, "ktxStream.readpos has unexpected offset % instead of 88", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 8, "ktxStream.readpos has unexpected size % instead of 8", it.type.runtime_size);
+                case "closeOnDestruct";
+                    assert(it.offset_in_bytes == 96, "ktxStream.closeOnDestruct has unexpected offset % instead of 96", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxStream.closeOnDestruct has unexpected size % instead of 1", it.type.runtime_size);
+            }
+        }
+        assert(size_of(ktxStream) == 104, "ktxStream has size % instead of 104", size_of(ktxStream));
+    }
+
+    {
+        info := type_info(ktxAstcParams);
+        for info.members {
+            if it.name == {
+                case "structSize";
+                    assert(it.offset_in_bytes == 0, "ktxAstcParams.structSize has unexpected offset % instead of 0", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxAstcParams.structSize has unexpected size % instead of 4", it.type.runtime_size);
+                case "verbose";
+                    assert(it.offset_in_bytes == 4, "ktxAstcParams.verbose has unexpected offset % instead of 4", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxAstcParams.verbose has unexpected size % instead of 1", it.type.runtime_size);
+                case "threadCount";
+                    assert(it.offset_in_bytes == 8, "ktxAstcParams.threadCount has unexpected offset % instead of 8", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxAstcParams.threadCount has unexpected size % instead of 4", it.type.runtime_size);
+                case "blockDimension";
+                    assert(it.offset_in_bytes == 12, "ktxAstcParams.blockDimension has unexpected offset % instead of 12", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxAstcParams.blockDimension has unexpected size % instead of 4", it.type.runtime_size);
+                case "mode";
+                    assert(it.offset_in_bytes == 16, "ktxAstcParams.mode has unexpected offset % instead of 16", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxAstcParams.mode has unexpected size % instead of 4", it.type.runtime_size);
+                case "qualityLevel";
+                    assert(it.offset_in_bytes == 20, "ktxAstcParams.qualityLevel has unexpected offset % instead of 20", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxAstcParams.qualityLevel has unexpected size % instead of 4", it.type.runtime_size);
+                case "normalMap";
+                    assert(it.offset_in_bytes == 24, "ktxAstcParams.normalMap has unexpected offset % instead of 24", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxAstcParams.normalMap has unexpected size % instead of 1", it.type.runtime_size);
+                case "perceptual";
+                    assert(it.offset_in_bytes == 25, "ktxAstcParams.perceptual has unexpected offset % instead of 25", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxAstcParams.perceptual has unexpected size % instead of 1", it.type.runtime_size);
+                case "inputSwizzle";
+                    assert(it.offset_in_bytes == 26, "ktxAstcParams.inputSwizzle has unexpected offset % instead of 26", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxAstcParams.inputSwizzle has unexpected size % instead of 4", it.type.runtime_size);
+            }
+        }
+        assert(size_of(ktxAstcParams) == 32, "ktxAstcParams has size % instead of 32", size_of(ktxAstcParams));
+    }
+
+    {
+        info := type_info(ktxBasisParams);
+        for info.members {
+            if it.name == {
+                case "structSize";
+                    assert(it.offset_in_bytes == 0, "ktxBasisParams.structSize has unexpected offset % instead of 0", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxBasisParams.structSize has unexpected size % instead of 4", it.type.runtime_size);
+                case "uastc";
+                    assert(it.offset_in_bytes == 4, "ktxBasisParams.uastc has unexpected offset % instead of 4", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxBasisParams.uastc has unexpected size % instead of 1", it.type.runtime_size);
+                case "verbose";
+                    assert(it.offset_in_bytes == 5, "ktxBasisParams.verbose has unexpected offset % instead of 5", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxBasisParams.verbose has unexpected size % instead of 1", it.type.runtime_size);
+                case "noSSE";
+                    assert(it.offset_in_bytes == 6, "ktxBasisParams.noSSE has unexpected offset % instead of 6", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxBasisParams.noSSE has unexpected size % instead of 1", it.type.runtime_size);
+                case "threadCount";
+                    assert(it.offset_in_bytes == 8, "ktxBasisParams.threadCount has unexpected offset % instead of 8", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxBasisParams.threadCount has unexpected size % instead of 4", it.type.runtime_size);
+                case "compressionLevel";
+                    assert(it.offset_in_bytes == 12, "ktxBasisParams.compressionLevel has unexpected offset % instead of 12", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxBasisParams.compressionLevel has unexpected size % instead of 4", it.type.runtime_size);
+                case "qualityLevel";
+                    assert(it.offset_in_bytes == 16, "ktxBasisParams.qualityLevel has unexpected offset % instead of 16", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxBasisParams.qualityLevel has unexpected size % instead of 4", it.type.runtime_size);
+                case "maxEndpoints";
+                    assert(it.offset_in_bytes == 20, "ktxBasisParams.maxEndpoints has unexpected offset % instead of 20", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxBasisParams.maxEndpoints has unexpected size % instead of 4", it.type.runtime_size);
+                case "endpointRDOThreshold";
+                    assert(it.offset_in_bytes == 24, "ktxBasisParams.endpointRDOThreshold has unexpected offset % instead of 24", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxBasisParams.endpointRDOThreshold has unexpected size % instead of 4", it.type.runtime_size);
+                case "maxSelectors";
+                    assert(it.offset_in_bytes == 28, "ktxBasisParams.maxSelectors has unexpected offset % instead of 28", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxBasisParams.maxSelectors has unexpected size % instead of 4", it.type.runtime_size);
+                case "selectorRDOThreshold";
+                    assert(it.offset_in_bytes == 32, "ktxBasisParams.selectorRDOThreshold has unexpected offset % instead of 32", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxBasisParams.selectorRDOThreshold has unexpected size % instead of 4", it.type.runtime_size);
+                case "inputSwizzle";
+                    assert(it.offset_in_bytes == 36, "ktxBasisParams.inputSwizzle has unexpected offset % instead of 36", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxBasisParams.inputSwizzle has unexpected size % instead of 4", it.type.runtime_size);
+                case "normalMap";
+                    assert(it.offset_in_bytes == 40, "ktxBasisParams.normalMap has unexpected offset % instead of 40", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxBasisParams.normalMap has unexpected size % instead of 1", it.type.runtime_size);
+                case "separateRGToRGB_A";
+                    assert(it.offset_in_bytes == 41, "ktxBasisParams.separateRGToRGB_A has unexpected offset % instead of 41", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxBasisParams.separateRGToRGB_A has unexpected size % instead of 1", it.type.runtime_size);
+                case "preSwizzle";
+                    assert(it.offset_in_bytes == 42, "ktxBasisParams.preSwizzle has unexpected offset % instead of 42", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxBasisParams.preSwizzle has unexpected size % instead of 1", it.type.runtime_size);
+                case "noEndpointRDO";
+                    assert(it.offset_in_bytes == 43, "ktxBasisParams.noEndpointRDO has unexpected offset % instead of 43", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxBasisParams.noEndpointRDO has unexpected size % instead of 1", it.type.runtime_size);
+                case "noSelectorRDO";
+                    assert(it.offset_in_bytes == 44, "ktxBasisParams.noSelectorRDO has unexpected offset % instead of 44", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxBasisParams.noSelectorRDO has unexpected size % instead of 1", it.type.runtime_size);
+                case "uastcFlags";
+                    assert(it.offset_in_bytes == 48, "ktxBasisParams.uastcFlags has unexpected offset % instead of 48", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxBasisParams.uastcFlags has unexpected size % instead of 4", it.type.runtime_size);
+                case "uastcRDO";
+                    assert(it.offset_in_bytes == 52, "ktxBasisParams.uastcRDO has unexpected offset % instead of 52", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxBasisParams.uastcRDO has unexpected size % instead of 1", it.type.runtime_size);
+                case "uastcRDOQualityScalar";
+                    assert(it.offset_in_bytes == 56, "ktxBasisParams.uastcRDOQualityScalar has unexpected offset % instead of 56", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxBasisParams.uastcRDOQualityScalar has unexpected size % instead of 4", it.type.runtime_size);
+                case "uastcRDODictSize";
+                    assert(it.offset_in_bytes == 60, "ktxBasisParams.uastcRDODictSize has unexpected offset % instead of 60", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxBasisParams.uastcRDODictSize has unexpected size % instead of 4", it.type.runtime_size);
+                case "uastcRDOMaxSmoothBlockErrorScale";
+                    assert(it.offset_in_bytes == 64, "ktxBasisParams.uastcRDOMaxSmoothBlockErrorScale has unexpected offset % instead of 64", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxBasisParams.uastcRDOMaxSmoothBlockErrorScale has unexpected size % instead of 4", it.type.runtime_size);
+                case "uastcRDOMaxSmoothBlockStdDev";
+                    assert(it.offset_in_bytes == 68, "ktxBasisParams.uastcRDOMaxSmoothBlockStdDev has unexpected offset % instead of 68", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 4, "ktxBasisParams.uastcRDOMaxSmoothBlockStdDev has unexpected size % instead of 4", it.type.runtime_size);
+                case "uastcRDODontFavorSimplerModes";
+                    assert(it.offset_in_bytes == 72, "ktxBasisParams.uastcRDODontFavorSimplerModes has unexpected offset % instead of 72", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxBasisParams.uastcRDODontFavorSimplerModes has unexpected size % instead of 1", it.type.runtime_size);
+                case "uastcRDONoMultithreading";
+                    assert(it.offset_in_bytes == 73, "ktxBasisParams.uastcRDONoMultithreading has unexpected offset % instead of 73", it.offset_in_bytes);
+                    assert(it.type.runtime_size == 1, "ktxBasisParams.uastcRDONoMultithreading has unexpected size % instead of 1", it.type.runtime_size);
+            }
+        }
+        assert(size_of(ktxBasisParams) == 76, "ktxBasisParams has size % instead of 76", size_of(ktxBasisParams));
+    }
+}
+

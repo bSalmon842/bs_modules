@@ -6,45 +6,55 @@
 }
 
 generate_all_bindings :: () -> bool {
-    success := generate_bindings_variant("ktx", .["include/ktx.h"]);
-    success &&= generate_bindings_variant("ktxvulkan", .["include/ktxvulkan.h"]);
-    return success;
-}
-
-generate_bindings_variant :: (output_name: string, includes: [] string) -> bool {
     available_flag_bits = .{};
 
     output_filename: string = ---;
 
+    os := OS;
+    options := get_build_options();
+    if array_find(options.compile_time_command_line, "android") then os = .ANDROID;
+    
     opts: Generate_Bindings_Options;
     {
+	opts.os = os;
         using opts;
 
-        #if OS == .WINDOWS {
-            output_filename = tprint("%_windows.jai", output_name);
+        if os == .WINDOWS {
+            output_filename = "ktx_windows.jai";
             array_add(*libpaths, "windows");
             array_add(*libnames, "ktx");
             strip_flags = 0;
-        } else #if OS == .LINUX {
-            output_filename = tprint("%_linux.jai", output_name);
+	    
+	    array_add(*source_files, "include/ktx.h");
+            array_add(*system_include_paths, "./include");
+        } else if os == .LINUX {
+            output_filename = "ktx_linux.jai";
             array_add(*libpaths, "linux");
-            array_add(*libnames, "libktx");
+            array_add(*libnames, "ktx");
             strip_flags = .INLINED_FUNCTIONS;
-        } else #if OS == .MACOS {
-            output_filename = tprint("%_macos.jai", output_name);
-            array_add(*libpaths, "macos");
+	} else if os == .ANDROID {
+	    array_add(*libpaths, "android");
             array_add(*libnames, "libktx");
+	    output_filename = "ktx_android.jai";
             strip_flags = .INLINED_FUNCTIONS;
+	    
+	    opts.cpu = .ARM64;
+
+	    array_add(*source_files, "include_android/ktx.h");
+            array_add(*system_include_paths, "./include_android");
+
+	    make_directory_if_it_does_not_exist("android");
+            ndk := get_ndk_paths();
+            target_triple := get_android_target_triple(cpu);
+	    array_add(*system_include_paths, tprint("%/usr/include", ndk.sysroot));
+	    array_add(*system_include_paths, tprint("%/usr/include/%", ndk.sysroot, target_triple));
         } else {
             assert(false, "OS is not supported.");
         }
-
-        for source_file: includes {
-            array_add(*source_files, source_file);
-        }
-
+	
+	array_add(*system_include_paths, ..get_default_system_include_paths());
         array_add(*system_include_paths, ".");
-        array_add(*system_include_paths, "./include");
+
         array_add(*extra_clang_arguments, "-x", "c", "-DWIN32_LEAN_AND_MEAN");
 
         visitor = libktx_visitor;
@@ -108,3 +118,6 @@ libktx_visitor :: (decl: *Declaration, parent_decl: *Declaration) -> Declaration
 #import "File";
 #import "Hash_Table";
 #import "String";
+
+#import "BuildCpp";
+#import "Toolchains/Android";
