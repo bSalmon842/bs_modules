@@ -61,7 +61,8 @@ make_log_file :: (programName : string, filenameFlags : Log_Filename_Flags = .FU
     }
 
     filename : String_Builder;
-    print_to_builder(*filename, "%/%_%.log", logFolder, programName, make_filename_timestamp(filenameFlags));
+    filenameTimestamp := make_filename_timestamp(filenameFlags);
+    print_to_builder(*filename, "%/%_%.log", logFolder, programName, filenameTimestamp);
     filenameString := builder_to_string(*filename);
     print("Attempting to open log file at %\n", filenameString);
     file, success := file_open(filenameString, for_writing=true, keep_existing_content=true);
@@ -79,6 +80,9 @@ make_log_file :: (programName : string, filenameFlags : Log_Filename_Flags = .FU
     } else {
         assert(false, "Failed to create log file.");
     }
+
+    free(filenameTimestamp.data);
+    free(filenameString.data);
     
     return LOG_FILE, TIMESTAMP_12HR, TIMESTAMP_UTC, TIMESTAMP_INCL_DATE;
 }
@@ -87,7 +91,6 @@ log :: (type : Log_Type, s : string, callLoc := #caller_location) {
     assert(!!LOG_FILE.handle);
     if type == .DEV && !IS_DEV then return;
 
-    logMsg : String_Builder;
     dt := to_calendar(current_time_consensus(), ifx TIMESTAMP_UTC then .UTC else .LOCAL);
 
     desig : string;
@@ -118,8 +121,7 @@ log :: (type : Log_Type, s : string, callLoc := #caller_location) {
     }
 
     filename := path_filename(callLoc.fully_pathed_filename);
-    print_to_builder(*logMsg, "% (%:%) %: %\n", timestamp, filename, callLoc.line_number, desig, s);
-    logMsgString := builder_to_string(*logMsg);
+    logMsgString := tprint("% (%:%) %: %\n", timestamp, filename, callLoc.line_number, desig, s);
     file_write(*LOG_FILE, logMsgString);
     if IS_DEV then print(logMsgString);
 
