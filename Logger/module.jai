@@ -123,7 +123,7 @@ log :: (type : Log_Type, s : string, callLoc := #caller_location) {
     filename := path_filename(callLoc.fully_pathed_filename);
     logMsgString := tprint("% (%:%) %: %\n", timestamp, filename, callLoc.line_number, desig, s);
     file_write(*LOG_FILE, logMsgString);
-    if IS_DEV then print(logMsgString);
+    if IS_DEV then print_color("%", logMsgString, color = get_colour_for_log_type(type));
 
     if type == .FATAL {
 	file_close(*LOG_FILE);
@@ -211,9 +211,23 @@ make_filename_timestamp :: (flags : Log_Filename_Flags) -> string {
     return builder_to_string(*timestamp);
 }
 
+get_colour_for_log_type :: (type : Log_Type) -> Console_Color {
+    
+    if type == {
+	case .SUCCESS; return .HI_GREEN;
+	case .WARN;    return .HI_YELLOW;
+	case .ERROR;   return .HI_RED;
+	case .FATAL;   return .HI_MAGENTA;
+	case .DEV;     return .HI_WHITE;
+    }
+    
+    return .WHITE;
+}
+
 #scope_module
 #import "Basic";
 #import "File";
+#import "Print_Color";
 #import "String";
 
 #if OS == .ANDROID {
