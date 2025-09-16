@@ -92,6 +92,8 @@ GetCurrentProcess :: () -> HANDLE #foreign kernel32;
 GetMonitorInfoA :: (hMonitor : HMONITOR, lpmi : *MONITORINFOEXA) -> BOOL #foreign user32;
 GetProcessMemoryInfo :: (Process : HANDLE, ppsmemCounters : *PROCESS_MEMORY_COUNTERS, cb : u32) -> BOOL #foreign psapi;
 
+SetThreadDescription :: (thread: HANDLE, threadDescription : LPCWSTR) -> s32 #foreign kernel32;
+
 #scope_module
 #import "Windows";
 
