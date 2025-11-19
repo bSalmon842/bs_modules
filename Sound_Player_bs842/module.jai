@@ -949,47 +949,7 @@ sound_player_init :: (given_config: Sound_Player_Config) -> bool {
     }
 
     using Audio_Channel;
-
-    // :ArcInits
-    // Because we don't have array-of-struct literals, we have to initialize
-    // these at runtime. @Cleanup.
-    arcs_6ch[0].speaker1 = CENTER;
-    arcs_6ch[0].speaker2 = FRONT_LEFT;
-
-    arcs_6ch[1].speaker1 = FRONT_LEFT;
-    arcs_6ch[1].speaker2 = REAR_LEFT;
-
-    arcs_6ch[2].speaker1 = REAR_LEFT;
-    arcs_6ch[2].speaker2 = REAR_RIGHT;
-
-    arcs_6ch[3].speaker1 = REAR_RIGHT;
-    arcs_6ch[3].speaker2 = FRONT_RIGHT;
-
-    arcs_6ch[4].speaker1 = FRONT_RIGHT;
-    arcs_6ch[4].speaker2 = CENTER;
-
-
-    arcs_8ch[0].speaker1 = CENTER;
-    arcs_8ch[0].speaker2 = FRONT_LEFT;
-
-    arcs_8ch[1].speaker1 = FRONT_LEFT;
-    arcs_8ch[1].speaker2 = REAR_LEFT;
-
-    arcs_8ch[2].speaker1 = REAR_LEFT;
-    arcs_8ch[2].speaker2 = EXTEND_LEFT;
-
-    arcs_8ch[3].speaker1 = EXTEND_LEFT;
-    arcs_8ch[3].speaker2 = EXTEND_RIGHT;
-
-    arcs_8ch[4].speaker1 = EXTEND_RIGHT;
-    arcs_8ch[4].speaker2 = REAR_RIGHT;
-
-    arcs_8ch[5].speaker1 = REAR_RIGHT;
-    arcs_8ch[5].speaker2 = FRONT_RIGHT;
-
-    arcs_8ch[6].speaker1 = FRONT_RIGHT;
-    arcs_8ch[6].speaker2 = CENTER;
-
+    
     //
     // Big VBAP init section here...
     //

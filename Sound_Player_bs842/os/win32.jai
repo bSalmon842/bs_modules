@@ -288,7 +288,6 @@ backend_init :: (config: Sound_Player_Config) -> Backend_Properties {
     hr = dsound.GetSpeakerConfig(dsound, *speaker_config);
 
     if SUCCEEDED(hr) {
-	array_reset(*channel_names);
         config := cast(DSSPEAKER) CONFIG(speaker_config);
         geometry := GEOMETRY(speaker_config);
 
@@ -548,7 +547,7 @@ enumeration_proc :: (guid: *GUID, Desc: *u8, DrvName: *u8, pContext: *void) #c_c
     }
 }
 
-// A pretty ridiculous way to find the our processes window, windows doesn't appear to offer a better way than this?
+// A pretty ridiculous way to find our processes window, windows doesn't appear to offer a better way than this?
 // Will return null when no window is found.
 // @Incomplete: Doesn't handle multi window programs, or programs using esoteric windows stuff.
 // This will probably go away when we stop using DirectSound. (??)
@@ -577,7 +576,7 @@ find_my_window :: () -> HWND {
             if !IsWindowVisible(hwnd)     return .TRUE; // Ignore weird invisible windows, eg graphics drivers appear to create these?
 
             window_handle = hwnd;
-            return FALSE;
+            return .FALSE;
         }
     }
 

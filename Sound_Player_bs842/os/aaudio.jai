@@ -13,15 +13,24 @@
 
 #scope_module
 
-GUID :: *void;
-
 OUTPUT_SAMPLING_RATE :: 44100;
 FILL_BUFFER_SIZE_IN_FRAMES :: OUTPUT_SAMPLING_RATE / 2;
 
 STREAM_FORMAT :: AAUDIO_FORMAT.PCM_I16;
 
+GUID :: *void;
+
 backend_init :: (config: Sound_Player_Config) -> (Backend_Properties) {
-    log("[aaudio] init called. update_from_a_thread == %.", config.update_from_a_thread);
+    if config.audible_when_window_is_not_in_focus {
+        // NOTE(Charles): This is technically possible on android, eg music apps do this. But it appears the way you
+        // do this is create a "service" (foreground service) in addition to our "activity" that runs our native code.
+        // It might be fun to try see if I can get this working doing as much stuff from native code as possible, but
+        // almost certainly it would require some java code, and various manifest configuration such that it probably
+        // won't make sense for Sound_Player to support.
+        log("[aaudio] audible_when_window_is_not_in_focus was true but this is not supported on Android", flags = .WARNING);
+    }
+
+    log_verbose("[aaudio] init called. update_from_a_thread == %.", config.update_from_a_thread);
     do_async = config.update_from_a_thread;
 
     builder: *AAudioStreamBuilder;
@@ -54,8 +63,8 @@ backend_init :: (config: Sound_Player_Config) -> (Backend_Properties) {
     AAudioStreamBuilder_setSampleRate(builder, OUTPUT_SAMPLING_RATE);
     AAudioStreamBuilder_setFormat(builder, STREAM_FORMAT);
 
-    buffer_capacity_in_frames = cast(s32) FILL_BUFFER_SIZE_IN_FRAMES;
-    AAudioStreamBuilder_setBufferCapacityInFrames(builder, buffer_capacity_in_frames);
+    requested_buffer_capacity_in_frames := cast(s32) FILL_BUFFER_SIZE_IN_FRAMES;
+    AAudioStreamBuilder_setBufferCapacityInFrames(builder, requested_buffer_capacity_in_frames);
 
     AAudioStreamBuilder_setPerformanceMode(builder, .LOW_LATENCY);
 
@@ -66,25 +75,56 @@ backend_init :: (config: Sound_Player_Config) -> (Backend_Properties) {
     // Verify stream configuration
 
     device_id := AAudioStream_getDeviceId(stream);
-    log("[aaudio] Stream started on device with id %", device_id);
+    log_verbose("[aaudio] Stream started on device with id %", device_id);
     if requested_device_id && requested_device_id != device_id {
         log("[aaudio] Device id % doesn't match the requested device id of %", device_id, requested_device_id, flags = .WARNING);
     }
 
     sample_rate     := AAudioStream_getSampleRate(stream);
     buffer_capactiy := AAudioStream_getBufferCapacityInFrames(stream);
-    log("sample_rate == %, capacity == %", sample_rate, buffer_capactiy);
+    log_verbose("[aaudio] sample_rate == %, capacity == %", sample_rate, buffer_capactiy);
 
     channel_count := AAudioStream_getChannelCount(stream);
-    channel_mask  := AAudioStream_getChannelMask(stream);
-    log("[aaudio] Stream channel count == %, mask == %", channel_count, channel_mask);
-
     num_channels = channel_count;
+
+    // AAudioStream_getChannelMask was added with API 32 so we dynamically load it here. On older phones we just don't set
+    // channel_names to anything.
+    // See :AndroidRuntimeLinkErrors for a longer explanation, and some ideas about how we could improve these kinds of situations.
+    // channel_mask := AAudioStream_getChannelMask(stream);
+    channel_mask := AAUDIO_CHANNEL.INVALID;
+
+    android_app := context.android_app;
+
+    // Only even try loading the proc on apis that will support it. Then any libdl failures are errors.
+    GET_CHANNEL_MASK_API_LEVEL :: 32;
+    if android_app.activity.sdkVersion >= GET_CHANNEL_MASK_API_LEVEL {
+        #import "POSIX";
+
+        handle := dlopen("libaaudio.so", RTLD_LAZY);
+        assert(handle != null, "Failed to dlopen libaaudio: %", to_string(dlerror()));
+
+        AAudioStream_getChannelMask_Type :: #type (stream: *AAudioStream) -> AAUDIO_CHANNEL #c_call;
+        getChannelMask := cast(AAudioStream_getChannelMask_Type, dlsym(handle, "AAudioStream_getChannelMask"));
+        if getChannelMask {
+            channel_mask = getChannelMask(stream);
+        } else {
+            log_error("dlsym failed: %", to_string(dlerror()));
+        }
+    } else {
+        log("[aaudio] Device is on SDK %, we are unable to query the channel mask. SDK % is required for that.", android_app.activity.sdkVersion, GET_CHANNEL_MASK_API_LEVEL, flags = .WARNING);
+    }
+
+    log_verbose("[aaudio] Stream channel count == %, mask == %", channel_count, channel_mask);
+
     // NOTE(Charles): Speaker configuration can be configured with get/setChannelMask. The below has been tested doing this
     // but as all my devices only actually  have stereo output, whether it's working beyond that I don't know! Sound_Player
     // doesn't actually use the channel_names atm anyway, so we are now at least on par with win32 backend.
     // Also, the AAudio bindings we have for AAUDIO_CHANNEL aren't the best. Refer to AAudio.h for full details.
     if channel_mask == {
+        case .INVALID;
+            // We are on an older phone. Not doing anything atm because, as is mentioned above, channel_names is not used atm.
+            // If it starts being used, we could infer the required channel_names from channel_count?
+
         case .STEREO;
             assert(num_channels == 2);
             array_add(*channel_names, "Left");
@@ -117,26 +157,27 @@ backend_init :: (config: Sound_Player_Config) -> (Backend_Properties) {
 
     // @Cleanup Configuration of buffer sizes, frames_per_burst etc, is all very arbitrary atm. Better job required!
 
-    // format, rate and channels wont change. Sharing mode or buffer capacity might.
-    buffer_capacity_to_check := AAudioStream_getBufferCapacityInFrames(stream);
-    assert(buffer_capacity_in_frames == buffer_capacity_to_check, "We chose % frames for buffer capacity, but it is actually % frames", buffer_capacity_in_frames, buffer_capacity_to_check);
-    log("[aaudio] buffer_capacity_in_frames == %", buffer_capacity_in_frames);
-
-    // See AAudioStream_setBufferSizeInFrames
-    buffer_size_in_frames = AAudioStream_getBufferSizeInFrames(stream);
-    log("[aaudio] buffer_size_in_frames == %", buffer_size_in_frames);
+    // Format, rate and channels wont change. Sharing mode or buffer capacity might. ???
+    
+    actual_buffer_capacity_in_frames := AAudioStream_getBufferCapacityInFrames(stream);
+    actual_buffer_size_in_frames     := AAudioStream_getBufferSizeInFrames(stream);
 
     // I am using this in an equivalent way to period_size is used in alsa. This probably isn't really correct
     // but it shuold work. Eg this burst size is related to the size of the buffer, not related to the hardware.
     frames_per_burst = AAudioStream_getFramesPerBurst(stream);
-    log("[aaudio] frames_per_burst == %", frames_per_burst);
+
+    // @Temp
+    log_verbose("[aaudio] AAudioStream_setBufferCapacityInFrames(%)", actual_buffer_capacity_in_frames);
+    log_verbose("[aaudio] AAudioStream_getBufferCapacityInFrames() == %", actual_buffer_capacity_in_frames);
+    log_verbose("[aaudio] AAudioStream_getBufferSizeInFrames()     == %", actual_buffer_size_in_frames);
+    log_verbose("[aaudio] AAudioStream_getFramesPerBurst()         == %", frames_per_burst);
 
     // NOTE(Charles): If you register a data call back (and keep all other config the same) frames per burst returns
     // 882 so that was my baseline. There is obvious latency if we don't override the frames_per_burst down to 882 but going
     // lower doesn't appear to decrease latency. (If this was decreased, a larger SAMPLE_BUFFER_NUM_BURSTS would be required
     // so that we have enough samples).
     frames_per_burst = 882;
-    log("[aaudio] overrding frames_per_burst == %", frames_per_burst);
+    log_verbose("[aaudio] overrding frames_per_burst == %", frames_per_burst);
 
     SAMPLE_BUFFER_NUM_BURSTS :: 10;
     sample_buffer_num_frames = cast(s64) frames_per_burst * SAMPLE_BUFFER_NUM_BURSTS;
@@ -175,8 +216,8 @@ backend_play :: () {
 
 // The other backends always return true here. This means they are updating audio both from the audio thread and from the main
 // thread every time Sound.update() is called. That doesn't seem right to me? If we are already updating from audio thread why do we
-// write from main thread as well?
-// Either way, here we only update from main thread if we aren't async updating.
+// write from main thread as well? Aaudio docs specifically say some calls, eg writing to stream, are not thread safe so if we are async
+// we only update from the audio thread.
 backend_needs_async_update_from_main_thread :: () -> bool {
     return !do_async;
 }
@@ -186,7 +227,7 @@ backend_needs_async_update_from_main_thread :: () -> bool {
 backend_count_buffered_bytes :: () -> (currently_buffered: s64, minimum_prebuffered_bytes: s64) {
     state := AAudioStream_getState(stream);
     if state != .STARTED {
-        log("[aaudio] count_buffered_bytes: we were called before the stream is in STARTED state, it is % instead.\n AAudio has some specifics about writing to it's buffer before the stream is started so for now we are just not doing that!", state, flags=.WARNING);
+        if !do_async  log("[aaudio] count_buffered_bytes: we were called before the stream is in STARTED state, it is % instead.\n AAudio has some specifics about writing to it's buffer before the stream is started so for now we are just not doing that!", state, flags=.WARNING);
         return 0, 0;
     }
 
@@ -201,7 +242,7 @@ backend_count_buffered_bytes :: () -> (currently_buffered: s64, minimum_prebuffe
         // Sound_Player stops requesting anymore data as we have enough buffered, but Aaudio isn't reading the data and
         // we are stuck. Just returning 0 here forces Sound_Player to keep requesting data which fills up the AAudio buffer
         // and gets it started. Once started, it works well enough. Uncomment the above log_error to see this.
-        log("[aaudio] count_buffered_bytes: frames_read is still zero, just returning 0 bytes buffered to kick start us!", flags=.WARNING);
+        if !do_async  log("[aaudio] count_buffered_bytes: frames_read is still zero, just returning 0 bytes buffered to kick start us!", flags=.WARNING);
         return 0, 0;
     }
 
@@ -216,11 +257,11 @@ backend_lock_fill_regions :: (bytes_to_lock: s64) -> (Fill_Region_Result, bool) 
 
     state := AAudioStream_getState(stream);
     if state != .STARTED {
-        log_error("[aaudio] get_fill_regions has been called before the stream is in STARTED state, it is % instead.\n AAudio has some specifics about writing to it's buffer before the stream is started so for now we are just not doing that!", state);
+        if !do_async  log_error("[aaudio] lock_fill_regions has been called before the stream is in STARTED state, it is % instead.\n AAudio has some specifics about writing to it's buffer before the stream is started so for now we are just not doing that!", state);
         return result, false;
     }
 
-    assert(bytes_to_lock <= sample_buffer.count, "[aaudio] get_fill_regions wants asked to lock % bytes, but sample buffer count is %", bytes_to_lock, sample_buffer.count);
+    assert(bytes_to_lock <= sample_buffer.count, "[aaudio] lock_fill_regions wants asked to lock % bytes, but sample buffer count is %", bytes_to_lock, sample_buffer.count);
     result.buffer0.count = bytes_to_lock;
     result.buffer0.data  = sample_buffer.data;
 
@@ -230,7 +271,7 @@ backend_lock_fill_regions :: (bytes_to_lock: s64) -> (Fill_Region_Result, bool) 
 backend_release_fill_regions :: (result: Fill_Region_Result) {
     state := AAudioStream_getState(stream);
     if state != .STARTED {
-        log_error("[aaudio] release_fill_regions has been called before the stream is in STARTED state, it is % instead.\n AAudio has some specifics about writing to it's buffer before the stream is started so for now we are just not doing that!", state);
+        if !do_async  log_error("[aaudio] release_fill_regions has been called before the stream is in STARTED state, it is % instead.\n AAudio has some specifics about writing to it's buffer before the stream is started so for now we are just not doing that!", state);
         return;
     }
     s0 := result.buffer0;
@@ -463,9 +504,14 @@ sample_buffer_num_frames: s64;
 // AAudio specific stuff below.
 
 // In frames
-buffer_size_in_frames: s32;
-buffer_capacity_in_frames: s32;
 stream: *AAudioStream;
 frames_per_burst: s32;
 
 #import "Android/AAudio";
+
+Basic :: #import "Basic";
+
+the_log_function_i_want_to_bake :: #procedure_of_call Basic.log("I am a string % % %", true, 123, 1.23);
+log         :: Basic.log;
+log_error   :: Basic.log_error;
+log_verbose :: #bake_arguments the_log_function_i_want_to_bake(flags = .VERBOSE_ONLY);
