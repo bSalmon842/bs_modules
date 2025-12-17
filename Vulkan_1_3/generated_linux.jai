@@ -11577,7 +11577,7 @@ StdVideoH264NonVclNaluType :: enum u32 {
 }
 
 StdVideoH264SpsVuiFlags :: struct {
-    __bitfield: u16;
+    __bitfield: u32;
     /* 
         aspect_ratio_info_present_flag: u32; /* 1 bits */
         overscan_info_present_flag: u32; /* 1 bits */
@@ -11592,7 +11592,7 @@ StdVideoH264SpsVuiFlags :: struct {
         nal_hrd_parameters_present_flag: u32; /* 1 bits */
         vcl_hrd_parameters_present_flag: u32; /* 1 bits */;
     */
-    #place __bitfield; StdVideoH264SpsVuiFlags_alignment: u32;
+    #overlay (__bitfield) StdVideoH264SpsVuiFlags_alignment: u32;
 }
 
 StdVideoH264HrdParameters :: struct {
@@ -11629,7 +11629,7 @@ StdVideoH264SequenceParameterSetVui :: struct {
 }
 
 StdVideoH264SpsFlags :: struct {
-    __bitfield: u16;
+    __bitfield: u32;
     /* 
         constraint_set0_flag: u32; /* 1 bits */
         constraint_set1_flag: u32; /* 1 bits */
@@ -11648,7 +11648,7 @@ StdVideoH264SpsFlags :: struct {
         seq_scaling_matrix_present_flag: u32; /* 1 bits */
         vui_parameters_present_flag: u32; /* 1 bits */;
     */
-    #place __bitfield; StdVideoH264SpsFlags_alignment: u32;
+    #overlay (__bitfield) StdVideoH264SpsFlags_alignment: u32;
 }
 
 StdVideoH264ScalingLists :: struct {
@@ -11687,7 +11687,7 @@ StdVideoH264SequenceParameterSet :: struct {
 }
 
 StdVideoH264PpsFlags :: struct {
-    __bitfield: u8;
+    __bitfield: u32;
     /* 
         transform_8x8_mode_flag: u32; /* 1 bits */
         redundant_pic_cnt_present_flag: u32; /* 1 bits */
@@ -11698,7 +11698,7 @@ StdVideoH264PpsFlags :: struct {
         entropy_coding_mode_flag: u32; /* 1 bits */
         pic_scaling_matrix_present_flag: u32; /* 1 bits */;
     */
-    #place __bitfield; StdVideoH264PpsFlags_alignment: u32;
+    #overlay (__bitfield) StdVideoH264PpsFlags_alignment: u32;
 }
 
 StdVideoH264PictureParameterSet :: struct {
@@ -11728,7 +11728,7 @@ StdVideoDecodeH264FieldOrderCount :: enum u32 {
 }
 
 StdVideoDecodeH264PictureInfoFlags :: struct {
-    __bitfield: u8;
+    __bitfield: u32;
     /* 
         field_pic_flag: u32; /* 1 bits */
         is_intra: u32; /* 1 bits */
@@ -11737,7 +11737,7 @@ StdVideoDecodeH264PictureInfoFlags :: struct {
         is_reference: u32; /* 1 bits */
         complementary_field_pair: u32; /* 1 bits */;
     */
-    #place __bitfield; StdVideoDecodeH264PictureInfoFlags_alignment: u32;
+    #overlay (__bitfield) StdVideoDecodeH264PictureInfoFlags_alignment: u32;
 }
 
 StdVideoDecodeH264PictureInfo :: struct {
@@ -11752,14 +11752,14 @@ StdVideoDecodeH264PictureInfo :: struct {
 }
 
 StdVideoDecodeH264ReferenceInfoFlags :: struct {
-    __bitfield: u8;
+    __bitfield: u32;
     /* 
         top_field_flag: u32; /* 1 bits */
         bottom_field_flag: u32; /* 1 bits */
         used_for_long_term_reference: u32; /* 1 bits */
         is_non_existing: u32; /* 1 bits */;
     */
-    #place __bitfield; StdVideoDecodeH264ReferenceInfoFlags_alignment: u32;
+    #overlay (__bitfield) StdVideoDecodeH264ReferenceInfoFlags_alignment: u32;
 }
 
 StdVideoDecodeH264ReferenceInfo :: struct {
@@ -12653,18 +12653,18 @@ StdVideoH265HrdParameters :: struct {
 }
 
 StdVideoH265VpsFlags :: struct {
-    __bitfield: u8;
+    __bitfield: u32;
     /* 
         vps_temporal_id_nesting_flag: u32; /* 1 bits */
         vps_sub_layer_ordering_info_present_flag: u32; /* 1 bits */
         vps_timing_info_present_flag: u32; /* 1 bits */
         vps_poc_proportional_to_timing_flag: u32; /* 1 bits */;
     */
-    #place __bitfield; StdVideoH265VpsFlags_alignment: u32;
+    #overlay (__bitfield) StdVideoH265VpsFlags_alignment: u32;
 }
 
 StdVideoH265ProfileTierLevelFlags :: struct {
-    __bitfield: u8;
+    __bitfield: u32;
     /* 
         general_tier_flag: u32; /* 1 bits */
         general_progressive_source_flag: u32; /* 1 bits */
@@ -12672,7 +12672,7 @@ StdVideoH265ProfileTierLevelFlags :: struct {
         general_non_packed_constraint_flag: u32; /* 1 bits */
         general_frame_only_constraint_flag: u32; /* 1 bits */;
     */
-    #place __bitfield; StdVideoH265ProfileTierLevelFlags_alignment: u32;
+    #overlay (__bitfield) StdVideoH265ProfileTierLevelFlags_alignment: u32;
 }
 
 StdVideoH265ProfileTierLevel :: struct {
@@ -12799,12 +12799,12 @@ StdVideoH265SpsFlags :: struct {
 }
 
 StdVideoH265ShortTermRefPicSetFlags :: struct {
-    __bitfield: u8;
+    __bitfield: u32;
     /* 
         inter_ref_pic_set_prediction_flag: u32; /* 1 bits */
         delta_rps_sign: u32; /* 1 bits */;
     */
-    #place __bitfield; StdVideoH265ShortTermRefPicSetFlags_alignment: u32;
+    #overlay (__bitfield) StdVideoH265ShortTermRefPicSetFlags_alignment: u32;
 }
 
 StdVideoH265ShortTermRefPicSet :: struct {
@@ -12948,14 +12948,14 @@ StdVideoH265PictureParameterSet :: struct {
 }
 
 StdVideoDecodeH265PictureInfoFlags :: struct {
-    __bitfield: u8;
+    __bitfield: u32;
     /* 
         IrapPicFlag: u32; /* 1 bits */
         IdrPicFlag: u32; /* 1 bits */
         IsReference: u32; /* 1 bits */
         short_term_ref_pic_set_sps_flag: u32; /* 1 bits */;
     */
-    #place __bitfield; StdVideoDecodeH265PictureInfoFlags_alignment: u32;
+    #overlay (__bitfield) StdVideoDecodeH265PictureInfoFlags_alignment: u32;
 }
 
 StdVideoDecodeH265PictureInfo :: struct {
@@ -12973,12 +12973,12 @@ StdVideoDecodeH265PictureInfo :: struct {
 }
 
 StdVideoDecodeH265ReferenceInfoFlags :: struct {
-    __bitfield: u8;
+    __bitfield: u32;
     /* 
         used_for_long_term_reference: u32; /* 1 bits */
         unused_for_reference: u32; /* 1 bits */;
     */
-    #place __bitfield; StdVideoDecodeH265ReferenceInfoFlags_alignment: u32;
+    #overlay (__bitfield) StdVideoDecodeH265ReferenceInfoFlags_alignment: u32;
 }
 
 StdVideoDecodeH265ReferenceInfo :: struct {

@@ -53,7 +53,7 @@ make_log_file :: (programName : string, filenameFlags : Log_Filename_Flags = .FU
 
     logFolder := "./logs";
     #if OS == .ANDROID {
-        logFolder = join(to_string(context.android_app.activity.externalDataPath), "/logs");
+        logFolder = join(to_string(android_app.activity.externalDataPath), "/logs");
     }
     
     if !make_directory_if_it_does_not_exist(logFolder) {
@@ -231,5 +231,5 @@ get_colour_for_log_type :: (type : Log_Type) -> Console_Color {
 #import "String";
 
 #if OS == .ANDROID {
-Android :: #import "Android";
+#import "Android";
 }

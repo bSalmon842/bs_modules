@@ -1,14 +1,18 @@
+//
 // AAudio backend for use with Android NDK.
 //
 // Docs: https://developer.android.com/ndk/guides/audio/aaudio/aaudio
 // Api reference: https://developer.android.com/ndk/reference/group/audio
 //
 //
-// @Incomplete
-// The Thread module, which Sound_Player uses for it's async stuff, isn't fully supported on arm yet, so update_from_a_thread
-// should be false for now (it can be true on X64, but no guarentee it will work well).
-// Although... AAudio recommends you use the data callback to write to device for the best performance. So it might be
-// possible to have the audio "threaded" just by using that? Not totally clear to me how that is supposed to be used.
+// @Incomplete: The Thread module wasn't fully supported on ARM when this code was written. Having update_from_a_thread
+// true does appear to work, but this needs checking!
+// AAudio recommends you use the data callback to write to device for the best performance?
+// Can refer to https://github.com/mackron/miniaudio for what it does?
+//
+// @Incomplete: :AndroidLifeCycle When we go into background our AAudioStream appears to be released. Can we handle
+// this purely in here, eg when we find the stream is closed? Or do we require changing the Sound_Player api to
+// provide hooks that apps can call based on window events. Or something else.
 //
 
 #scope_module
@@ -48,7 +52,6 @@ backend_init :: (config: Sound_Player_Config) -> (Backend_Properties) {
             log_error("[aaudio] ErrorCallback received error %. It wasn't handled!", error);
         }
     }, *context);
-
 
     // Configure and create stream
 
@@ -93,8 +96,6 @@ backend_init :: (config: Sound_Player_Config) -> (Backend_Properties) {
     // channel_mask := AAudioStream_getChannelMask(stream);
     channel_mask := AAUDIO_CHANNEL.INVALID;
 
-    android_app := context.android_app;
-
     // Only even try loading the proc on apis that will support it. Then any libdl failures are errors.
     GET_CHANNEL_MASK_API_LEVEL :: 32;
     if android_app.activity.sdkVersion >= GET_CHANNEL_MASK_API_LEVEL {
@@ -117,7 +118,7 @@ backend_init :: (config: Sound_Player_Config) -> (Backend_Properties) {
     log_verbose("[aaudio] Stream channel count == %, mask == %", channel_count, channel_mask);
 
     // NOTE(Charles): Speaker configuration can be configured with get/setChannelMask. The below has been tested doing this
-    // but as all my devices only actually  have stereo output, whether it's working beyond that I don't know! Sound_Player
+    // but as all my devices only actually have stereo output, whether it's working beyond that I don't know! Sound_Player
     // doesn't actually use the channel_names atm anyway, so we are now at least on par with win32 backend.
     // Also, the AAudio bindings we have for AAUDIO_CHANNEL aren't the best. Refer to AAudio.h for full details.
     if channel_mask == {
@@ -158,7 +159,7 @@ backend_init :: (config: Sound_Player_Config) -> (Backend_Properties) {
     // @Cleanup Configuration of buffer sizes, frames_per_burst etc, is all very arbitrary atm. Better job required!
 
     // Format, rate and channels wont change. Sharing mode or buffer capacity might. ???
-    
+
     actual_buffer_capacity_in_frames := AAudioStream_getBufferCapacityInFrames(stream);
     actual_buffer_size_in_frames     := AAudioStream_getBufferSizeInFrames(stream);
 
@@ -311,7 +312,13 @@ backend_release_fill_regions :: (result: Fill_Region_Result) {
         }
     }
 
-    assert(total_frames_written == total_frames_to_write, "AAudioStream_write expected to write % frames, but instead we wrote % frames", total_frames_to_write, total_frames_written);
+    // This hits when bringing the app out of background with total_frames_written being zero. AAudioStream_write returning zero says it's not
+    // an error, so not sure what is going on. I really need to do a full pass on this crap and get it all working properly.
+    //
+    // assert(total_frames_written == total_frames_to_write, "AAudioStream_write expected to write % frames, but instead we wrote % frames", total_frames_to_write, total_frames_written);
+    if total_frames_written != total_frames_to_write {
+        log_error("AAudioStream_write expected to write % frames, but instead we wrote % frames", total_frames_to_write, total_frames_written);
+    }
 }
 
 backend_shutdown :: () {
@@ -325,10 +332,11 @@ backend_shutdown :: () {
 
 // Use the JNI to query for available devices. The device ids returned here can be used in AAudioStreamBuilder_setDeviceId.
 backend_get_devices :: () -> [] Output_Device {
-    #import "Android/Jni";
+    #import "Android";
+    #import "Android/Jni"; // @Cleanup: Submodule!
 
-    assert(context.android_app != null && context.android_app.activity != null);
-    app := context.android_app;
+    assert(android_app != null && android_app.activity != null);
+    app := android_app;
 
     output_devices: [..] Output_Device;
 
@@ -358,7 +366,8 @@ backend_get_devices :: () -> [] Output_Device {
     //    }
 
     // @TODO: Cache the various classes and methods on first call, and only actually do the getDevices call on subsequent
-    // calls. (Note that JNI_OnLoad could be used to do such caching once on startup if desired).
+    // calls. (Note that JNI_OnLoad might seem like a sensible place to do this, but it won't be called for how our program
+    // code gets loaded. Ie our program is loaded in native code and not with the java System.loadLibrary.)
 
     Context_ := env.*.FindClass(env, "android/content/Context");
     if !Context_ {
@@ -507,6 +516,7 @@ sample_buffer_num_frames: s64;
 stream: *AAudioStream;
 frames_per_burst: s32;
 
+#import "Android"; // To check sdkLevel via android_app
 #import "Android/AAudio";
 
 Basic :: #import "Basic";

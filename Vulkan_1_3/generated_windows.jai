@@ -11577,17 +11577,17 @@ StdVideoH264NonVclNaluType :: enum u32 {
 
 StdVideoH264SpsVuiFlags :: struct {
     aspect_ratio_info_present_flag:  u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 1*/ overscan_info_present_flag:      u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 2*/ overscan_appropriate_flag:       u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 3*/ video_signal_type_present_flag:  u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 4*/ video_full_range_flag:           u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 5*/ color_description_present_flag:  u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 6*/ chroma_loc_info_present_flag:    u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 7*/ timing_info_present_flag:        u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 8*/ fixed_frame_rate_flag:           u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 9*/ bitstream_restriction_flag:      u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 10*/ nal_hrd_parameters_present_flag: u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 11*/ vcl_hrd_parameters_present_flag: u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 1*/ overscan_info_present_flag:      u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 2*/ overscan_appropriate_flag:       u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 3*/ video_signal_type_present_flag:  u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 4*/ video_full_range_flag:           u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 5*/ color_description_present_flag:  u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 6*/ chroma_loc_info_present_flag:    u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 7*/ timing_info_present_flag:        u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 8*/ fixed_frame_rate_flag:           u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 9*/ bitstream_restriction_flag:      u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 10*/ nal_hrd_parameters_present_flag: u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 11*/ vcl_hrd_parameters_present_flag: u32;
 }
 
 StdVideoH264HrdParameters :: struct {
@@ -11625,21 +11625,21 @@ StdVideoH264SequenceParameterSetVui :: struct {
 
 StdVideoH264SpsFlags :: struct {
     constraint_set0_flag:                 u32;
-    #place constraint_set0_flag; /*bitfield 1*/ constraint_set1_flag:                 u32;
-    #place constraint_set0_flag; /*bitfield 2*/ constraint_set2_flag:                 u32;
-    #place constraint_set0_flag; /*bitfield 3*/ constraint_set3_flag:                 u32;
-    #place constraint_set0_flag; /*bitfield 4*/ constraint_set4_flag:                 u32;
-    #place constraint_set0_flag; /*bitfield 5*/ constraint_set5_flag:                 u32;
-    #place constraint_set0_flag; /*bitfield 6*/ direct_8x8_inference_flag:            u32;
-    #place constraint_set0_flag; /*bitfield 7*/ mb_adaptive_frame_field_flag:         u32;
-    #place constraint_set0_flag; /*bitfield 8*/ frame_mbs_only_flag:                  u32;
-    #place constraint_set0_flag; /*bitfield 9*/ delta_pic_order_always_zero_flag:     u32;
-    #place constraint_set0_flag; /*bitfield 10*/ separate_colour_plane_flag:           u32;
-    #place constraint_set0_flag; /*bitfield 11*/ gaps_in_frame_num_value_allowed_flag: u32;
-    #place constraint_set0_flag; /*bitfield 12*/ qpprime_y_zero_transform_bypass_flag: u32;
-    #place constraint_set0_flag; /*bitfield 13*/ frame_cropping_flag:                  u32;
-    #place constraint_set0_flag; /*bitfield 14*/ seq_scaling_matrix_present_flag:      u32;
-    #place constraint_set0_flag; /*bitfield 15*/ vui_parameters_present_flag:          u32;
+    #overlay (constraint_set0_flag) /*bitfield 1*/ constraint_set1_flag:                 u32;
+    #overlay (constraint_set0_flag) /*bitfield 2*/ constraint_set2_flag:                 u32;
+    #overlay (constraint_set0_flag) /*bitfield 3*/ constraint_set3_flag:                 u32;
+    #overlay (constraint_set0_flag) /*bitfield 4*/ constraint_set4_flag:                 u32;
+    #overlay (constraint_set0_flag) /*bitfield 5*/ constraint_set5_flag:                 u32;
+    #overlay (constraint_set0_flag) /*bitfield 6*/ direct_8x8_inference_flag:            u32;
+    #overlay (constraint_set0_flag) /*bitfield 7*/ mb_adaptive_frame_field_flag:         u32;
+    #overlay (constraint_set0_flag) /*bitfield 8*/ frame_mbs_only_flag:                  u32;
+    #overlay (constraint_set0_flag) /*bitfield 9*/ delta_pic_order_always_zero_flag:     u32;
+    #overlay (constraint_set0_flag) /*bitfield 10*/ separate_colour_plane_flag:           u32;
+    #overlay (constraint_set0_flag) /*bitfield 11*/ gaps_in_frame_num_value_allowed_flag: u32;
+    #overlay (constraint_set0_flag) /*bitfield 12*/ qpprime_y_zero_transform_bypass_flag: u32;
+    #overlay (constraint_set0_flag) /*bitfield 13*/ frame_cropping_flag:                  u32;
+    #overlay (constraint_set0_flag) /*bitfield 14*/ seq_scaling_matrix_present_flag:      u32;
+    #overlay (constraint_set0_flag) /*bitfield 15*/ vui_parameters_present_flag:          u32;
 }
 
 StdVideoH264ScalingLists :: struct {
@@ -11679,13 +11679,13 @@ StdVideoH264SequenceParameterSet :: struct {
 
 StdVideoH264PpsFlags :: struct {
     transform_8x8_mode_flag:                      u32;
-    #place transform_8x8_mode_flag; /*bitfield 1*/ redundant_pic_cnt_present_flag:               u32;
-    #place transform_8x8_mode_flag; /*bitfield 2*/ constrained_intra_pred_flag:                  u32;
-    #place transform_8x8_mode_flag; /*bitfield 3*/ deblocking_filter_control_present_flag:       u32;
-    #place transform_8x8_mode_flag; /*bitfield 4*/ weighted_pred_flag:                           u32;
-    #place transform_8x8_mode_flag; /*bitfield 5*/ bottom_field_pic_order_in_frame_present_flag: u32;
-    #place transform_8x8_mode_flag; /*bitfield 6*/ entropy_coding_mode_flag:                     u32;
-    #place transform_8x8_mode_flag; /*bitfield 7*/ pic_scaling_matrix_present_flag:              u32;
+    #overlay (transform_8x8_mode_flag) /*bitfield 1*/ redundant_pic_cnt_present_flag:               u32;
+    #overlay (transform_8x8_mode_flag) /*bitfield 2*/ constrained_intra_pred_flag:                  u32;
+    #overlay (transform_8x8_mode_flag) /*bitfield 3*/ deblocking_filter_control_present_flag:       u32;
+    #overlay (transform_8x8_mode_flag) /*bitfield 4*/ weighted_pred_flag:                           u32;
+    #overlay (transform_8x8_mode_flag) /*bitfield 5*/ bottom_field_pic_order_in_frame_present_flag: u32;
+    #overlay (transform_8x8_mode_flag) /*bitfield 6*/ entropy_coding_mode_flag:                     u32;
+    #overlay (transform_8x8_mode_flag) /*bitfield 7*/ pic_scaling_matrix_present_flag:              u32;
 }
 
 StdVideoH264PictureParameterSet :: struct {
@@ -11716,11 +11716,11 @@ StdVideoDecodeH264FieldOrderCount :: enum u32 {
 
 StdVideoDecodeH264PictureInfoFlags :: struct {
     field_pic_flag:           u32;
-    #place field_pic_flag; /*bitfield 1*/ is_intra:                 u32;
-    #place field_pic_flag; /*bitfield 2*/ IdrPicFlag:               u32;
-    #place field_pic_flag; /*bitfield 3*/ bottom_field_flag:        u32;
-    #place field_pic_flag; /*bitfield 4*/ is_reference:             u32;
-    #place field_pic_flag; /*bitfield 5*/ complementary_field_pair: u32;
+    #overlay (field_pic_flag) /*bitfield 1*/ is_intra:                 u32;
+    #overlay (field_pic_flag) /*bitfield 2*/ IdrPicFlag:               u32;
+    #overlay (field_pic_flag) /*bitfield 3*/ bottom_field_flag:        u32;
+    #overlay (field_pic_flag) /*bitfield 4*/ is_reference:             u32;
+    #overlay (field_pic_flag) /*bitfield 5*/ complementary_field_pair: u32;
 }
 
 StdVideoDecodeH264PictureInfo :: struct {
@@ -11736,9 +11736,9 @@ StdVideoDecodeH264PictureInfo :: struct {
 
 StdVideoDecodeH264ReferenceInfoFlags :: struct {
     top_field_flag:               u32;
-    #place top_field_flag; /*bitfield 1*/ bottom_field_flag:            u32;
-    #place top_field_flag; /*bitfield 2*/ used_for_long_term_reference: u32;
-    #place top_field_flag; /*bitfield 3*/ is_non_existing:              u32;
+    #overlay (top_field_flag) /*bitfield 1*/ bottom_field_flag:            u32;
+    #overlay (top_field_flag) /*bitfield 2*/ used_for_long_term_reference: u32;
+    #overlay (top_field_flag) /*bitfield 3*/ is_non_existing:              u32;
 }
 
 StdVideoDecodeH264ReferenceInfo :: struct {
@@ -12602,12 +12602,12 @@ StdVideoH265SubLayerHrdParameters :: struct {
 
 StdVideoH265HrdFlags :: struct {
     nal_hrd_parameters_present_flag:           u32;
-    #place nal_hrd_parameters_present_flag; /*bitfield 1*/ vcl_hrd_parameters_present_flag:           u32;
-    #place nal_hrd_parameters_present_flag; /*bitfield 2*/ sub_pic_hrd_params_present_flag:           u32;
-    #place nal_hrd_parameters_present_flag; /*bitfield 3*/ sub_pic_cpb_params_in_pic_timing_sei_flag: u32;
-    #place nal_hrd_parameters_present_flag; /*bitfield 4*/ fixed_pic_rate_general_flag:               u32;
-    #place nal_hrd_parameters_present_flag; /*bitfield 12*/ fixed_pic_rate_within_cvs_flag:            u32;
-    #place nal_hrd_parameters_present_flag; /*bitfield 20*/ low_delay_hrd_flag:                        u32;
+    #overlay (nal_hrd_parameters_present_flag) /*bitfield 1*/ vcl_hrd_parameters_present_flag:           u32;
+    #overlay (nal_hrd_parameters_present_flag) /*bitfield 2*/ sub_pic_hrd_params_present_flag:           u32;
+    #overlay (nal_hrd_parameters_present_flag) /*bitfield 3*/ sub_pic_cpb_params_in_pic_timing_sei_flag: u32;
+    #overlay (nal_hrd_parameters_present_flag) /*bitfield 4*/ fixed_pic_rate_general_flag:               u32;
+    #overlay (nal_hrd_parameters_present_flag) /*bitfield 12*/ fixed_pic_rate_within_cvs_flag:            u32;
+    #overlay (nal_hrd_parameters_present_flag) /*bitfield 20*/ low_delay_hrd_flag:                        u32;
 }
 
 StdVideoH265HrdParameters :: struct {
@@ -12630,17 +12630,17 @@ StdVideoH265HrdParameters :: struct {
 
 StdVideoH265VpsFlags :: struct {
     vps_temporal_id_nesting_flag:             u32;
-    #place vps_temporal_id_nesting_flag; /*bitfield 1*/ vps_sub_layer_ordering_info_present_flag: u32;
-    #place vps_temporal_id_nesting_flag; /*bitfield 2*/ vps_timing_info_present_flag:             u32;
-    #place vps_temporal_id_nesting_flag; /*bitfield 3*/ vps_poc_proportional_to_timing_flag:      u32;
+    #overlay (vps_temporal_id_nesting_flag) /*bitfield 1*/ vps_sub_layer_ordering_info_present_flag: u32;
+    #overlay (vps_temporal_id_nesting_flag) /*bitfield 2*/ vps_timing_info_present_flag:             u32;
+    #overlay (vps_temporal_id_nesting_flag) /*bitfield 3*/ vps_poc_proportional_to_timing_flag:      u32;
 }
 
 StdVideoH265ProfileTierLevelFlags :: struct {
     general_tier_flag:                  u32;
-    #place general_tier_flag; /*bitfield 1*/ general_progressive_source_flag:    u32;
-    #place general_tier_flag; /*bitfield 2*/ general_interlaced_source_flag:     u32;
-    #place general_tier_flag; /*bitfield 3*/ general_non_packed_constraint_flag: u32;
-    #place general_tier_flag; /*bitfield 4*/ general_frame_only_constraint_flag: u32;
+    #overlay (general_tier_flag) /*bitfield 1*/ general_progressive_source_flag:    u32;
+    #overlay (general_tier_flag) /*bitfield 2*/ general_interlaced_source_flag:     u32;
+    #overlay (general_tier_flag) /*bitfield 3*/ general_non_packed_constraint_flag: u32;
+    #overlay (general_tier_flag) /*bitfield 4*/ general_frame_only_constraint_flag: u32;
 }
 
 StdVideoH265ProfileTierLevel :: struct {
@@ -12675,23 +12675,23 @@ StdVideoH265ScalingLists :: struct {
 
 StdVideoH265SpsVuiFlags :: struct {
     aspect_ratio_info_present_flag:          u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 1*/ overscan_info_present_flag:              u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 2*/ overscan_appropriate_flag:               u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 3*/ video_signal_type_present_flag:          u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 4*/ video_full_range_flag:                   u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 5*/ colour_description_present_flag:         u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 6*/ chroma_loc_info_present_flag:            u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 7*/ neutral_chroma_indication_flag:          u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 8*/ field_seq_flag:                          u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 9*/ frame_field_info_present_flag:           u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 10*/ default_display_window_flag:             u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 11*/ vui_timing_info_present_flag:            u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 12*/ vui_poc_proportional_to_timing_flag:     u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 13*/ vui_hrd_parameters_present_flag:         u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 14*/ bitstream_restriction_flag:              u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 15*/ tiles_fixed_structure_flag:              u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 16*/ motion_vectors_over_pic_boundaries_flag: u32;
-    #place aspect_ratio_info_present_flag; /*bitfield 17*/ restricted_ref_pic_lists_flag:           u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 1*/ overscan_info_present_flag:              u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 2*/ overscan_appropriate_flag:               u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 3*/ video_signal_type_present_flag:          u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 4*/ video_full_range_flag:                   u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 5*/ colour_description_present_flag:         u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 6*/ chroma_loc_info_present_flag:            u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 7*/ neutral_chroma_indication_flag:          u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 8*/ field_seq_flag:                          u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 9*/ frame_field_info_present_flag:           u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 10*/ default_display_window_flag:             u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 11*/ vui_timing_info_present_flag:            u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 12*/ vui_poc_proportional_to_timing_flag:     u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 13*/ vui_hrd_parameters_present_flag:         u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 14*/ bitstream_restriction_flag:              u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 15*/ tiles_fixed_structure_flag:              u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 16*/ motion_vectors_over_pic_boundaries_flag: u32;
+    #overlay (aspect_ratio_info_present_flag) /*bitfield 17*/ restricted_ref_pic_lists_flag:           u32;
 }
 
 StdVideoH265SequenceParameterSetVui :: struct {
@@ -12729,40 +12729,40 @@ StdVideoH265PredictorPaletteEntries :: struct {
 
 StdVideoH265SpsFlags :: struct {
     sps_temporal_id_nesting_flag:                    u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 1*/ separate_colour_plane_flag:                      u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 2*/ conformance_window_flag:                         u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 3*/ sps_sub_layer_ordering_info_present_flag:        u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 4*/ scaling_list_enabled_flag:                       u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 5*/ sps_scaling_list_data_present_flag:              u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 6*/ amp_enabled_flag:                                u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 7*/ sample_adaptive_offset_enabled_flag:             u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 8*/ pcm_enabled_flag:                                u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 9*/ pcm_loop_filter_disabled_flag:                   u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 10*/ long_term_ref_pics_present_flag:                 u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 11*/ sps_temporal_mvp_enabled_flag:                   u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 12*/ strong_intra_smoothing_enabled_flag:             u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 13*/ vui_parameters_present_flag:                     u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 14*/ sps_extension_present_flag:                      u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 15*/ sps_range_extension_flag:                        u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 16*/ transform_skip_rotation_enabled_flag:            u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 17*/ transform_skip_context_enabled_flag:             u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 18*/ implicit_rdpcm_enabled_flag:                     u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 19*/ explicit_rdpcm_enabled_flag:                     u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 20*/ extended_precision_processing_flag:              u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 21*/ intra_smoothing_disabled_flag:                   u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 22*/ high_precision_offsets_enabled_flag:             u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 23*/ persistent_rice_adaptation_enabled_flag:         u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 24*/ cabac_bypass_alignment_enabled_flag:             u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 25*/ sps_scc_extension_flag:                          u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 26*/ sps_curr_pic_ref_enabled_flag:                   u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 27*/ palette_mode_enabled_flag:                       u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 28*/ sps_palette_predictor_initializers_present_flag: u32;
-    #place sps_temporal_id_nesting_flag; /*bitfield 29*/ intra_boundary_filtering_disabled_flag:          u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 1*/ separate_colour_plane_flag:                      u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 2*/ conformance_window_flag:                         u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 3*/ sps_sub_layer_ordering_info_present_flag:        u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 4*/ scaling_list_enabled_flag:                       u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 5*/ sps_scaling_list_data_present_flag:              u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 6*/ amp_enabled_flag:                                u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 7*/ sample_adaptive_offset_enabled_flag:             u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 8*/ pcm_enabled_flag:                                u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 9*/ pcm_loop_filter_disabled_flag:                   u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 10*/ long_term_ref_pics_present_flag:                 u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 11*/ sps_temporal_mvp_enabled_flag:                   u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 12*/ strong_intra_smoothing_enabled_flag:             u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 13*/ vui_parameters_present_flag:                     u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 14*/ sps_extension_present_flag:                      u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 15*/ sps_range_extension_flag:                        u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 16*/ transform_skip_rotation_enabled_flag:            u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 17*/ transform_skip_context_enabled_flag:             u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 18*/ implicit_rdpcm_enabled_flag:                     u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 19*/ explicit_rdpcm_enabled_flag:                     u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 20*/ extended_precision_processing_flag:              u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 21*/ intra_smoothing_disabled_flag:                   u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 22*/ high_precision_offsets_enabled_flag:             u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 23*/ persistent_rice_adaptation_enabled_flag:         u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 24*/ cabac_bypass_alignment_enabled_flag:             u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 25*/ sps_scc_extension_flag:                          u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 26*/ sps_curr_pic_ref_enabled_flag:                   u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 27*/ palette_mode_enabled_flag:                       u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 28*/ sps_palette_predictor_initializers_present_flag: u32;
+    #overlay (sps_temporal_id_nesting_flag) /*bitfield 29*/ intra_boundary_filtering_disabled_flag:          u32;
 }
 
 StdVideoH265ShortTermRefPicSetFlags :: struct {
     inter_ref_pic_set_prediction_flag: u32;
-    #place inter_ref_pic_set_prediction_flag; /*bitfield 1*/ delta_rps_sign:                    u32;
+    #overlay (inter_ref_pic_set_prediction_flag) /*bitfield 1*/ delta_rps_sign:                    u32;
 }
 
 StdVideoH265ShortTermRefPicSet :: struct {
@@ -12831,36 +12831,36 @@ StdVideoH265SequenceParameterSet :: struct {
 
 StdVideoH265PpsFlags :: struct {
     dependent_slice_segments_enabled_flag:           u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 1*/ output_flag_present_flag:                        u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 2*/ sign_data_hiding_enabled_flag:                   u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 3*/ cabac_init_present_flag:                         u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 4*/ constrained_intra_pred_flag:                     u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 5*/ transform_skip_enabled_flag:                     u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 6*/ cu_qp_delta_enabled_flag:                        u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 7*/ pps_slice_chroma_qp_offsets_present_flag:        u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 8*/ weighted_pred_flag:                              u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 9*/ weighted_bipred_flag:                            u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 10*/ transquant_bypass_enabled_flag:                  u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 11*/ tiles_enabled_flag:                              u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 12*/ entropy_coding_sync_enabled_flag:                u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 13*/ uniform_spacing_flag:                            u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 14*/ loop_filter_across_tiles_enabled_flag:           u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 15*/ pps_loop_filter_across_slices_enabled_flag:      u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 16*/ deblocking_filter_control_present_flag:          u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 17*/ deblocking_filter_override_enabled_flag:         u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 18*/ pps_deblocking_filter_disabled_flag:             u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 19*/ pps_scaling_list_data_present_flag:              u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 20*/ lists_modification_present_flag:                 u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 21*/ slice_segment_header_extension_present_flag:     u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 22*/ pps_extension_present_flag:                      u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 23*/ cross_component_prediction_enabled_flag:         u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 24*/ chroma_qp_offset_list_enabled_flag:              u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 25*/ pps_curr_pic_ref_enabled_flag:                   u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 26*/ residual_adaptive_colour_transform_enabled_flag: u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 27*/ pps_slice_act_qp_offsets_present_flag:           u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 28*/ pps_palette_predictor_initializers_present_flag: u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 29*/ monochrome_palette_flag:                         u32;
-    #place dependent_slice_segments_enabled_flag; /*bitfield 30*/ pps_range_extension_flag:                        u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 1*/ output_flag_present_flag:                        u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 2*/ sign_data_hiding_enabled_flag:                   u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 3*/ cabac_init_present_flag:                         u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 4*/ constrained_intra_pred_flag:                     u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 5*/ transform_skip_enabled_flag:                     u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 6*/ cu_qp_delta_enabled_flag:                        u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 7*/ pps_slice_chroma_qp_offsets_present_flag:        u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 8*/ weighted_pred_flag:                              u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 9*/ weighted_bipred_flag:                            u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 10*/ transquant_bypass_enabled_flag:                  u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 11*/ tiles_enabled_flag:                              u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 12*/ entropy_coding_sync_enabled_flag:                u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 13*/ uniform_spacing_flag:                            u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 14*/ loop_filter_across_tiles_enabled_flag:           u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 15*/ pps_loop_filter_across_slices_enabled_flag:      u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 16*/ deblocking_filter_control_present_flag:          u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 17*/ deblocking_filter_override_enabled_flag:         u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 18*/ pps_deblocking_filter_disabled_flag:             u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 19*/ pps_scaling_list_data_present_flag:              u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 20*/ lists_modification_present_flag:                 u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 21*/ slice_segment_header_extension_present_flag:     u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 22*/ pps_extension_present_flag:                      u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 23*/ cross_component_prediction_enabled_flag:         u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 24*/ chroma_qp_offset_list_enabled_flag:              u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 25*/ pps_curr_pic_ref_enabled_flag:                   u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 26*/ residual_adaptive_colour_transform_enabled_flag: u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 27*/ pps_slice_act_qp_offsets_present_flag:           u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 28*/ pps_palette_predictor_initializers_present_flag: u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 29*/ monochrome_palette_flag:                         u32;
+    #overlay (dependent_slice_segments_enabled_flag) /*bitfield 30*/ pps_range_extension_flag:                        u32;
 }
 
 StdVideoH265PictureParameterSet :: struct {
@@ -12904,9 +12904,9 @@ StdVideoH265PictureParameterSet :: struct {
 
 StdVideoDecodeH265PictureInfoFlags :: struct {
     IrapPicFlag:                     u32;
-    #place IrapPicFlag; /*bitfield 1*/ IdrPicFlag:                      u32;
-    #place IrapPicFlag; /*bitfield 2*/ IsReference:                     u32;
-    #place IrapPicFlag; /*bitfield 3*/ short_term_ref_pic_set_sps_flag: u32;
+    #overlay (IrapPicFlag) /*bitfield 1*/ IdrPicFlag:                      u32;
+    #overlay (IrapPicFlag) /*bitfield 2*/ IsReference:                     u32;
+    #overlay (IrapPicFlag) /*bitfield 3*/ short_term_ref_pic_set_sps_flag: u32;
 }
 
 StdVideoDecodeH265PictureInfo :: struct {
@@ -12925,7 +12925,7 @@ StdVideoDecodeH265PictureInfo :: struct {
 
 StdVideoDecodeH265ReferenceInfoFlags :: struct {
     used_for_long_term_reference: u32;
-    #place used_for_long_term_reference; /*bitfield 1*/ unused_for_reference:         u32;
+    #overlay (used_for_long_term_reference) /*bitfield 1*/ unused_for_reference:         u32;
 }
 
 StdVideoDecodeH265ReferenceInfo :: struct {
@@ -15238,9 +15238,9 @@ VkAabbPositionsNV :: VkAabbPositionsKHR;
 VkAccelerationStructureInstanceKHR :: struct {
     transform:                              VkTransformMatrixKHR;
     instanceCustomIndex:                    u32;
-    #place instanceCustomIndex; /*bitfield 24*/ mask:                                   u32;
+    #overlay (instanceCustomIndex) /*bitfield 24*/ mask: u32;
     instanceShaderBindingTableRecordOffset: u32;
-    #place instanceShaderBindingTableRecordOffset; /*bitfield 24*/ flags:                                  VkGeometryInstanceFlagsKHR;
+    #overlay (instanceShaderBindingTableRecordOffset) /*bitfield 24*/ flags: VkGeometryInstanceFlagsKHR;
     accelerationStructureReference:         u64;
 }
 
@@ -16927,9 +16927,9 @@ VkAccelerationStructureMatrixMotionInstanceNV :: struct {
     transformT0:                            VkTransformMatrixKHR;
     transformT1:                            VkTransformMatrixKHR;
     instanceCustomIndex:                    u32;
-    #place instanceCustomIndex; /*bitfield 24*/ mask:                                   u32;
+    #overlay (instanceCustomIndex) /*bitfield 24*/ mask: u32;
     instanceShaderBindingTableRecordOffset: u32;
-    #place instanceShaderBindingTableRecordOffset; /*bitfield 24*/ flags:                                  VkGeometryInstanceFlagsKHR;
+    #overlay (instanceShaderBindingTableRecordOffset) /*bitfield 24*/ flags: VkGeometryInstanceFlagsKHR;
     accelerationStructureReference:         u64;
 }
 
@@ -16956,9 +16956,9 @@ VkAccelerationStructureSRTMotionInstanceNV :: struct {
     transformT0:                            VkSRTDataNV;
     transformT1:                            VkSRTDataNV;
     instanceCustomIndex:                    u32;
-    #place instanceCustomIndex; /*bitfield 24*/ mask:                                   u32;
+    #overlay (instanceCustomIndex) /*bitfield 24*/ mask: u32;
     instanceShaderBindingTableRecordOffset: u32;
-    #place instanceShaderBindingTableRecordOffset; /*bitfield 24*/ flags:                                  VkGeometryInstanceFlagsKHR;
+    #overlay (instanceShaderBindingTableRecordOffset) /*bitfield 24*/ flags: VkGeometryInstanceFlagsKHR;
     accelerationStructureReference:         u64;
 }
 
