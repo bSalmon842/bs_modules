@@ -99,3 +99,63 @@ get_magic4 :: (data: string, base: s64) -> u32 {
 
     return u;
 }
+
+// BS842 Specific Functions
+pack_sound_data :: (data : *Sound_Data) -> string {
+    builder : String_Builder;
+    init_string_builder(*builder);
+
+    append_field :: (field : *$T) #expand {
+	append(*`builder, cast(*u8) field, size_of(T));
+    }
+
+    append_array :: (arr : [] $T) #expand {
+	append_field(*arr.count);
+	if arr.count > 0 {
+	    append(*`builder, cast(*u8) arr.data, size_of(T) * arr.count);
+	}
+    }
+
+    append_string :: (str : *string) #expand {
+	append_field(*str.count);
+	if str.count > 0 {
+	    append(*`builder, str.data, str.count);
+	}
+    }
+    
+    append_string(*data.name);
+    append_string(*data.full_path);
+    append_field(*data.loaded);
+    append_field(*data.skip_load);
+    
+    append_field(*data.type);
+    
+    append_field(*data.nsamples_times_nchannels);
+    
+    append_field(*data.nchannels);
+    append_field(*data.sampling_rate);
+    
+    append_string(*data.buffer);
+    // NOTE: The 'samples' field is just a pointer into buffer.data, so we just save the offset from the data pointer
+    sampleOffset := cast(s64) (cast(*u8) data.samples - data.buffer.data);
+    append_field(*sampleOffset);
+
+    append_field(*data.volume_scale);
+    append_field(*data.silence_before_repeat);
+
+    append_string(*data.filename_to_stream_from);
+    append_array(data.source_directions);
+
+    append_field(*data.nBlockAlign);
+    append_field(*data.wSamplesPerBlock);
+    
+    return builder_to_string(*builder);
+}
+
+unpack_sound_data :: (data : string) -> Sound_Data, bool {
+    soundData : Sound_Data;
+
+    log_error("Unimplemented.");
+    return soundData, false;
+}
+
