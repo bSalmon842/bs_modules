@@ -3652,6 +3652,12 @@ ImplWin32_NewFrame :: () -> void #foreign imgui "?ImGui_ImplWin32_NewFrame@@YAXX
 
 ImplWin32_WndProcHandler :: (hWnd: HWND, msg: u32, wParam: WPARAM, lParam: LPARAM) -> LRESULT #foreign imgui "?ImGui_ImplWin32_WndProcHandler@@YA_JPEAUHWND__@@I_K_J@Z";
 
+/*
+PUT THIS INTO TOP OF INPUT MODULE MyWindowProc TO GET IMGUI INPUT WORKING
+imguiResult = ImGui.ImplWin32_WndProcHandler(hwnd, message, wParam, lParam);
+if imguiResult then return imguiResult;
+*/
+
 // DPI-related helpers (optional)
 // - Use to enable DPI awareness without having to create an application manifest.
 // - Your own app may already do this via a manifest or explicit calls. This is mostly useful for our examples/ apps.
