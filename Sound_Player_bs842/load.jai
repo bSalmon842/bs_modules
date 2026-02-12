@@ -152,10 +152,59 @@ pack_sound_data :: (data : *Sound_Data) -> string {
     return builder_to_string(*builder);
 }
 
-unpack_sound_data :: (data : string) -> Sound_Data, bool {
-    soundData : Sound_Data;
+unpack_sound_data :: (raw : string) -> Sound_Data {
+    // NOTE: The get functions also advance the data ptr, so we can just pass the rawData variable without needing to manually advance
+    
+    rawData := raw;
+    data : Sound_Data;
+    
+    get_value :: (data : *string, $T : Type) -> T {
+	value := (cast(*T) data.data).*;
+	advance(data, size_of(T));
+	return value;
+    }
+    
+    get_string :: (data : *string) -> string {
+	strLen := (cast(*s64) data.data).*;
+	advance(data, size_of(s64));
+	
+	strValue := alloc_string(strLen);
+	memcpy(strValue.data, data.data, strLen);
+	advance(data, strLen);
+	
+	return strValue;
+    }
+    
+    data.name = get_string(*rawData);
+    data.full_path = get_string(*rawData);
+    data.loaded = get_value(*rawData, type_of(data.loaded));
+    data.skip_load = get_value(*rawData, type_of(data.skip_load));
+    
+    data.type = get_value(*rawData, type_of(data.type));
+    
+    data.nsamples_times_nchannels = get_value(*rawData, type_of(data.nsamples_times_nchannels));
+    
+    data.nchannels = get_value(*rawData, type_of(data.nchannels));
+    data.sampling_rate = get_value(*rawData, type_of(data.sampling_rate));
 
-    log_error("Unimplemented.");
-    return soundData, false;
+    data.buffer = get_string(*rawData);
+    sampleOffset := get_value(*rawData, s64);
+    data.samples = cast(*s16) (cast(*u8) data.buffer.data + sampleOffset);
+
+    data.volume_scale = get_value(*rawData, type_of(data.volume_scale));
+    data.silence_before_repeat = get_value(*rawData, type_of(data.silence_before_repeat));
+
+    data.filename_to_stream_from = get_string(*rawData);
+
+    advance(*rawData, size_of(type_of(data.source_directions.count)));
+    for * data.source_directions {
+	it.* = (cast(*Source_Direction) rawData.data).*;
+	advance(*rawData, size_of(Source_Direction));
+    }
+
+    data.nBlockAlign = get_value(*rawData, type_of(data.nBlockAlign));
+    data.wSamplesPerBlock = get_value(*rawData, type_of(data.wSamplesPerBlock));
+    
+    return data;
 }
 
