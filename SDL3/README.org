@@ -1,0 +1,76 @@
+#+title: README
+
+Handmade Jai bindings for SDL3. Work in progress.
+
+In this branch, I've modified the standard bindings to make them more 'Jai-like':
+- Removed SDL_ prefix from all bindings, so module can be imported into an SDL namespace without an ugly, duplicated prefix.
+- snake_case for all function calls, Upper_Snake_Case for structs/enums.
+- All numeric constants that otherwise behave like enums are now just enums/enum flags. This removes the guesswork when deciding whether or not the unary dot syntax should be used for a particular flag.
+- Removed redundant prefixes from enums for readability.
+- Moved SDL_image into separate module. Can be imported like (namespace optional):
+  #+begin_src
+  SDL :: #import "SDL3";
+  IMG :: #import "SDL3/image";
+  #+end_src
+
+If you prefer to work with the standard prefixed bindings, please checkout the 'prefixed' branch; however, I probably won't keep this one up-to-date.
+
+* SDL3 source
+- https://github.com/libsdl-org/SDL/tree/main/include/SDL3
+
+SDL3 build commands (for Linux):
+#+begin_src
+git clone https://github.com/libsdl-org/SDL
+cd SDL
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DSDL_STATIC=ON ..
+cmake --build . --config Release --parallel
+#+end_src
+
+SDL_image build commands (assuming SDL and SDL_image root are at same directory level):
+#+begin_src
+git clone https://github.com/libsdl-org/SDL_image
+cd SDL_image
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DSDL3_DIR=../SDL/build -DBUILD_SHARED_LIBS=ON
+cmake --build . --config Release
+cmake .. -DCMAKE_BUILD_TYPE=Release -DSDL3_DIR=../SDL/build -DBUILD_SHARED_LIBS=OFF
+cmake --build . --config Release
+#+end_src
+
+* Finished
+- SDL_process.jai
+- SDL_gamepad.jai
+- SDL_pixels.jai
+- SDL_image.jai
+- SDL_gpu.jai
+- SDL_timer.jai
+- SDL_rect.jai
+- SDL_audio.jai
+- SDL_power.jai
+- SDL_render.jai
+- SDL_video.jai
+- SDL_events.jai
+- SDL_init.jai
+- SDL_scancode.jai
+- SDL_error.jai
+- SDL_surface.jai
+- SDL_keyboard.jai
+- SDL_mouse.jai
+- SDL_keycode.jai
+- SDL_platform.jai
+- SDL_guid.jai
+
+* Unfinished
+- SDL_camera.jai
+- SDL_touch.jai
+- SDL_joystick.jai
+- SDL_pen.jai
+- SDL_sensor.jai
+- SDL_stdinc.jai
+- SDL_properties.jai
+- SDL_blendmode.jai
+- SDL_iostream.jai
+- SDL_filesystem.jai
