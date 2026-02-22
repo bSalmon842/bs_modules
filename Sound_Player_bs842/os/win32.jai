@@ -98,7 +98,7 @@ WAVE_FORMAT_EXTENSIBLE         :: 0xFFFE;
 //
 // KSDATAFORMAT_SUBTYPE_PCM :: #run string_to_guid("00000001-0000-0010-8000-00aa00389b71");
 
-init_KSDATAFORMAT_SUBTYPE_PCM :: (dest: *GUID) { <<dest = string_to_guid("00000001-0000-0010-8000-00aa00389b71"); }
+init_KSDATAFORMAT_SUBTYPE_PCM :: (dest: *GUID) { dest.* = string_to_guid("00000001-0000-0010-8000-00aa00389b71"); }
 
 
 SPEAKER_FRONT_LEFT             :: 0x1;
