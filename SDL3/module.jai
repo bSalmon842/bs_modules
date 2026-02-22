@@ -40,3 +40,7 @@
     #library,system,link_always "libm";
     #library,system,link_always "libpthread";
 }
+else #if OS == .WINDOWS
+{
+    SDL3 :: #library "windows/SDL3";
+}
