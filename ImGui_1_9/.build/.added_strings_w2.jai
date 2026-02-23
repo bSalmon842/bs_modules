@@ -1,7 +1,7 @@
 // Workspace: Target Program
 
 //
-// #insert text. Generated from C:/work/jai/modules/Bindings_Generator/module.jai:337.
+// #insert text. Generated from D:/jai/modules/Bindings_Generator/module.jai:338.
 //
     ([2] string).[
         .["FLT_MIN", "FLOAT32_MIN"],

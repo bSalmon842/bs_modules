@@ -24,6 +24,67 @@ IM_COL32_A_MASK :: 0xFF000000;
 
 IM_DRAWLIST_TEX_LINES_WIDTH_MAX :: 63;
 
+VULKAN_H_ :: 1;
+
+VULKAN_CORE_H_ :: 1;
+
+VULKAN_VIDEO_CODEC_H264STD_H_ :: 1;
+
+vulkan_video_codec_h264std :: 1;
+
+VULKAN_VIDEO_CODECS_COMMON_H_ :: 1;
+
+vulkan_video_codecs_common :: 1;
+
+STD_VIDEO_H264_CPB_CNT_LIST_SIZE :: 32;
+STD_VIDEO_H264_SCALING_LIST_4X4_NUM_LISTS :: 6;
+STD_VIDEO_H264_SCALING_LIST_4X4_NUM_ELEMENTS :: 16;
+STD_VIDEO_H264_SCALING_LIST_8X8_NUM_LISTS :: 6;
+STD_VIDEO_H264_SCALING_LIST_8X8_NUM_ELEMENTS :: 64;
+STD_VIDEO_H264_MAX_NUM_LIST_REF :: 32;
+STD_VIDEO_H264_MAX_CHROMA_PLANES :: 2;
+STD_VIDEO_H264_NO_REFERENCE_PICTURE :: 0xFF;
+
+VULKAN_VIDEO_CODEC_H264STD_DECODE_H_ :: 1;
+
+vulkan_video_codec_h264std_decode :: 1;
+
+STD_VIDEO_DECODE_H264_FIELD_ORDER_COUNT_LIST_SIZE :: 2;
+
+VULKAN_VIDEO_CODEC_H265STD_H_ :: 1;
+
+vulkan_video_codec_h265std :: 1;
+
+STD_VIDEO_H265_CPB_CNT_LIST_SIZE :: 32;
+STD_VIDEO_H265_SUBLAYERS_LIST_SIZE :: 7;
+STD_VIDEO_H265_SCALING_LIST_4X4_NUM_LISTS :: 6;
+STD_VIDEO_H265_SCALING_LIST_4X4_NUM_ELEMENTS :: 16;
+STD_VIDEO_H265_SCALING_LIST_8X8_NUM_LISTS :: 6;
+STD_VIDEO_H265_SCALING_LIST_8X8_NUM_ELEMENTS :: 64;
+STD_VIDEO_H265_SCALING_LIST_16X16_NUM_LISTS :: 6;
+STD_VIDEO_H265_SCALING_LIST_16X16_NUM_ELEMENTS :: 64;
+STD_VIDEO_H265_SCALING_LIST_32X32_NUM_LISTS :: 2;
+STD_VIDEO_H265_SCALING_LIST_32X32_NUM_ELEMENTS :: 64;
+STD_VIDEO_H265_CHROMA_QP_OFFSET_LIST_SIZE :: 6;
+STD_VIDEO_H265_CHROMA_QP_OFFSET_TILE_COLS_LIST_SIZE :: 19;
+STD_VIDEO_H265_CHROMA_QP_OFFSET_TILE_ROWS_LIST_SIZE :: 21;
+STD_VIDEO_H265_PREDICTOR_PALETTE_COMPONENTS_LIST_SIZE :: 3;
+STD_VIDEO_H265_PREDICTOR_PALETTE_COMP_ENTRIES_LIST_SIZE :: 128;
+STD_VIDEO_H265_MAX_NUM_LIST_REF :: 15;
+STD_VIDEO_H265_MAX_CHROMA_PLANES :: 2;
+STD_VIDEO_H265_MAX_SHORT_TERM_REF_PIC_SETS :: 64;
+STD_VIDEO_H265_MAX_DPB_SIZE :: 16;
+STD_VIDEO_H265_MAX_LONG_TERM_REF_PICS_SPS :: 32;
+STD_VIDEO_H265_MAX_LONG_TERM_PICS :: 16;
+STD_VIDEO_H265_MAX_DELTA_POC :: 48;
+STD_VIDEO_H265_NO_REFERENCE_PICTURE :: 0xFF;
+
+VULKAN_VIDEO_CODEC_H265STD_DECODE_H_ :: 1;
+
+vulkan_video_codec_h265std_decode :: 1;
+
+STD_VIDEO_DECODE_H265_REF_PIC_SET_LIST_SIZE :: 8;
+
 ImDrawListSharedData :: struct {}
 
 ImFontBuilderIO :: struct {}
@@ -3651,22 +3712,6 @@ ImplWin32_Shutdown :: () -> void #foreign imgui "?ImGui_ImplWin32_Shutdown@@YAXX
 ImplWin32_NewFrame :: () -> void #foreign imgui "?ImGui_ImplWin32_NewFrame@@YAXXZ";
 
 ImplWin32_WndProcHandler :: (hWnd: HWND, msg: u32, wParam: WPARAM, lParam: LPARAM) -> LRESULT #foreign imgui "?ImGui_ImplWin32_WndProcHandler@@YA_JPEAUHWND__@@I_K_J@Z";
-
-/*
-PUT THIS INTO TOP OF INPUT MODULE MyWindowProc TO GET IMGUI INPUT WORKING
-imguiResult = ImGui.ImplWin32_WndProcHandler(hwnd, message, wParam, lParam);
-if imguiResult then return imguiResult;
-*/
-
-// DPI-related helpers (optional)
-// - Use to enable DPI awareness without having to create an application manifest.
-// - Your own app may already do this via a manifest or explicit calls. This is mostly useful for our examples/ apps.
-// - In theory we could call simple functions from Windows SDK such as SetProcessDPIAware(), SetProcessDpiAwareness(), etc.
-//   but most of the functions provided by Microsoft require Windows 8.1/10+ SDK at compile time and Windows 8/10+ at runtime,
-//   neither we want to require the user to have. So we dynamically select and load those functions to avoid dependencies.
-ImplWin32_EnableDpiAwareness :: () -> void #foreign imgui "?ImGui_ImplWin32_EnableDpiAwareness@@YAXXZ";
-ImplWin32_GetDpiScaleForHwnd :: (hwnd: *void) -> float #foreign imgui "?ImGui_ImplWin32_GetDpiScaleForHwnd@@YAMPEAX@Z";
-ImplWin32_GetDpiScaleForMonitor :: (monitor: *void) -> float #foreign imgui "?ImGui_ImplWin32_GetDpiScaleForMonitor@@YAMPEAX@Z";
 
 // Backend API
 ImplOpenGL3_Init :: (glsl_version: *u8 = null) -> bool #foreign imgui "?ImGui_ImplOpenGL3_Init@@YA_NPEBD@Z";
