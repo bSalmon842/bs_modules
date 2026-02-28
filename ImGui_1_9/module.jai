@@ -68,7 +68,7 @@ reset_string :: (str: *string) {
     #load "backend.jai";
     #load "windows.jai";
     #system_library,link_always "user32"; // Needed by imgui unless ImGui is compiled it with "IMGUI_DISABLE_WIN32_DEFAULT_CLIPBOARD_FUNCS"
+    #system_library,link_always "shell32";
 } else {
     #load "unix.jai";
 }
-

@@ -4,7 +4,7 @@ COMPILE       :: true; // Enable to compile the imgui library from source before
 COMPILE_DEBUG :: false; // Compile a debug or release version of ImGui?
 
 // We don’t ship the Dear ImGui source with the compiler. Download a Dear ImGui release and update this path if you want to re-generate the bindings.
-IMGUI_PATH :: "src/imgui-1.90.4";
+IMGUI_PATH :: "src/imgui-1.92.6";
 
 DECLARATIONS_TO_OMIT :: string.[
     // We have custom declarations for these in module.jai:
@@ -51,13 +51,14 @@ generate_bindings :: () -> bool {
         array_add(*imgui_src_files, tprint("%/backends/imgui_impl_vulkan.cpp", IMGUI_PATH));
         array_add(*imgui_src_files, tprint("%/backends/imgui_impl_win32.cpp", IMGUI_PATH));
         array_add(*imgui_src_files, tprint("%/backends/imgui_impl_opengl3.cpp", IMGUI_PATH));
+        array_add(*imgui_src_files, tprint("%/backends/imgui_impl_sdl3.cpp", IMGUI_PATH));
 		
         success := true;
         #if OS == .WINDOWS {
             make_directory_if_it_does_not_exist("windows");
-            success &&= build_cpp_dynamic_lib("windows/ImGui", ..imgui_src_files, extra = .["/DIMGUI_API=__declspec(dllexport)"], library_files = .["vulkan-1.lib"], debug=COMPILE_DEBUG);
+            success &&= build_cpp_dynamic_lib("windows/ImGui", ..imgui_src_files, extra = .["/DIMGUI_API=__declspec(dllexport)", "/IC:/work/bs_modules/ImGui_1_9/src/imgui-1.92.6/backends"], library_files = .["vulkan-1.lib", "SDL3.lib"], debug=COMPILE_DEBUG);
             // We set IMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS. Otherwise all users of the ImGui module have to link against "imm32".
-            success &&= build_cpp_static_lib("windows/ImGui", ..imgui_src_files, extra = .["/DIMGUI_API=__declspec(dllexport)", "/DIMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS"], library_files = .["vulkan-1.lib"], debug=COMPILE_DEBUG);
+            success &&= build_cpp_static_lib("windows/ImGui", ..imgui_src_files, extra = .["/DIMGUI_API=__declspec(dllexport)", "/DIMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS", "/IC:/work/bs_modules/ImGui_1_9/src/imgui-1.92.6/backends"], library_files = .["vulkan-1.lib", "SDL3.lib"], debug=COMPILE_DEBUG);
         } else #if OS == .LINUX {
             make_directory_if_it_does_not_exist("linux");
             success &&= build_cpp_dynamic_lib("linux/ImGui", ..imgui_src_files, debug=COMPILE_DEBUG);
@@ -107,7 +108,8 @@ generate_bindings :: () -> bool {
         array_add(*source_files,  tprint("%/imgui.h", IMGUI_PATH));
         array_add(*source_files,  tprint("%/backends/imgui_impl_vulkan.h", IMGUI_PATH));
         array_add(*source_files,  tprint("%/backends/imgui_impl_win32.h", IMGUI_PATH));
-		array_add(*source_files,  tprint("%/backends/imgui_impl_opengl3.h", IMGUI_PATH));
+	array_add(*source_files,  tprint("%/backends/imgui_impl_opengl3.h", IMGUI_PATH));
+	array_add(*source_files,  tprint("%/backends/imgui_impl_sdl3.h", IMGUI_PATH));
         array_add(*extra_clang_arguments, "-x", "c++", "-DWIN32_LEAN_AND_MEAN");
         array_add(*flatten_namespaces, "ImGui");
         array_add(*strip_prefixes, "ImGui");
