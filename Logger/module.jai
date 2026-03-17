@@ -87,7 +87,7 @@ make_log_file :: (programName : string, filenameFlags : Log_Filename_Flags = .FU
     return LOG_FILE, TIMESTAMP_12HR, TIMESTAMP_UTC, TIMESTAMP_INCL_DATE;
 }
 
-log :: (type : Log_Type, s : string, callLoc := #caller_location) {
+log :: (type : Log_Type, s: string, args: .. Any, callLoc := #caller_location) {
     assert(!!LOG_FILE.handle);
     if type == .DEV && !IS_DEV then return;
 
@@ -121,7 +121,7 @@ log :: (type : Log_Type, s : string, callLoc := #caller_location) {
     }
 
     filename := path_filename(callLoc.fully_pathed_filename);
-    logMsgString := tprint("% (%:%) %: %\n", timestamp, filename, callLoc.line_number, desig, s);
+    logMsgString := tprint("% (%:%) %: %\n", timestamp, filename, callLoc.line_number, desig, tprint(s, ..args));
     file_write(*LOG_FILE, logMsgString);
     if IS_DEV then print_color("%", logMsgString, color = get_colour_for_log_type(type));
 
