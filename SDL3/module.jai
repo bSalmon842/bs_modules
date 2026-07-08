@@ -1,3 +1,6 @@
+
+set_main_ready :: () #foreign SDL3 "SDL_SetMainReady";
+
 #load "SDL_platform.jai";
 #load "SDL_error.jai";
 #load "SDL_init.jai";
@@ -28,19 +31,30 @@
 #load "SDL_gamepad.jai";
 #load "SDL_guid.jai";
 #load "SDL_process.jai";
+#load "SDL_vulkan.jai";
+#load "SDL_messagebox.jai";
+#load "SDL_system.jai";
+#load "SDL_dialog.jai";
+
+#if OS == .ANDROID {
+    #load "SDL_android.jai";
+    
+}
+
+#scope_module
+#import "Basic";
 
 #scope_export
 
-#if OS == .LINUX
-{
+#if OS == .LINUX {
     X11 :: #import "X11";
     SDL3       :: #library "linux/libSDL3";
     SDL3_image :: #library "linux/libSDL3_image";
     #library,system,link_always "libdl";
     #library,system,link_always "libm";
     #library,system,link_always "libpthread";
-}
-else #if OS == .WINDOWS
-{
+} else #if OS == .ANDROID {
+    SDL3 :: #library "android/libSDL3";
+} else #if OS == .WINDOWS {
     SDL3 :: #library "windows/SDL3";
 }

@@ -37,23 +37,28 @@ Log_Flags :: enum_flags u8 {
     USE_UTC                :: 0x1;
 }
 
-set_log_file :: (file : File, time_12hr : bool, time_utc : bool, time_inclDate : bool) {
+set_log_file :: (file : LogFile, time_12hr : bool, time_utc : bool, time_inclDate : bool) {
     LOG_FILE = file;
     TIMESTAMP_12HR = time_12hr;
     TIMESTAMP_UTC = time_utc;
     TIMESTAMP_INCL_DATE = time_inclDate;
 }
 
-make_log_file :: (programName : string, filenameFlags : Log_Filename_Flags = .FULL_TIMESTAMP, flags : Log_Flags = 0) -> File, bool, bool, bool {
-    assert(!LOG_FILE.handle, "A log file is already opened for this program.");
+make_log_file :: (programName : string, filenameFlags : Log_Filename_Flags = .FULL_TIMESTAMP, flags : Log_Flags = 0) -> LogFile, bool, bool, bool {
+    #if OS == .ANDROID {
+	assert(!LOG_FILE, "A log file is already opened for this program.");
+    } else {
+	assert(!LOG_FILE.handle, "A log file is already opened for this program.");
+    }
 
     TIMESTAMP_INCL_DATE = cast(bool) (flags & .SHOW_DATE_IN_TIMESTAMP);
     TIMESTAMP_12HR = cast(bool) (flags & .USE_12_HR);
     TIMESTAMP_UTC = cast(bool) (flags & .USE_UTC);
 
     logFolder := "./logs";
+    
     #if OS == .ANDROID {
-        logFolder = join(to_string(android_app.activity.externalDataPath), "/logs");
+        logFolder = join(to_string(SDL.get_android_cache_path()), "/logs");
     }
     
     if !make_directory_if_it_does_not_exist(logFolder) {
@@ -65,20 +70,36 @@ make_log_file :: (programName : string, filenameFlags : Log_Filename_Flags = .FU
     print_to_builder(*filename, "%/%_%.log", logFolder, programName, filenameTimestamp);
     filenameString := builder_to_string(*filename);
     print("Attempting to open log file at %\n", filenameString);
-    file, success := file_open(filenameString, for_writing=true, keep_existing_content=true);
-    if success {
+
+    // Write a separator, we always want as much timestamp data as possible, but check the passed in filename flags for whether to use 12 hr clock format and/or UTC
+    separatorTimestamp := tprint("===== Opened Log File at % =======================================================\n", make_separator_timestamp((flags & .USE_12_HR) | (flags & .USE_UTC)));
+    separatorBorder := copy_temporary_string(separatorTimestamp);
+    for 0 .. separatorBorder.count-1 if separatorBorder.data[it] != #char "=" then separatorBorder.data[it] = #char "=";
+    separatorBorder.data[separatorBorder.count-1] = #char "\n";
+    
+    #if OS == .ANDROID {
+	stream := SDL.io_from_file(tprint("%1%2", filenameString, "\0").data, "a");
+	if !stream {
+	    assert(false, "Failed to create log file.");
+	}
+
+	LOG_FILE = stream;
+	
+	SDL.write_io(LOG_FILE, separatorBorder.data,    cast(u32) separatorBorder.count);
+	SDL.write_io(LOG_FILE, separatorTimestamp.data, cast(u32) separatorTimestamp.count);
+	SDL.write_io(LOG_FILE, separatorBorder.data,    cast(u32) separatorBorder.count);
+    } else {
+	file, success := file_open(filenameString, for_writing=true, keep_existing_content=true);
+	if !success {
+	    assert(false, "Failed to create log file.");
+	}
+	
         LOG_FILE = file;
         file_seek(LOG_FILE, 0, .END);
-        // Write a separator, we always want as much timestamp data as possible, but check the passed in filename flags for whether to use 12 hr clock format and/or UTC
-        separatorTimestamp := tprint("===== Opened Log File at % =======================================================\n", make_separator_timestamp((flags & .USE_12_HR) | (flags & .USE_UTC)));
-        separatorBorder := copy_temporary_string(separatorTimestamp);
-        for 0 .. separatorBorder.count-1 if separatorBorder.data[it] != #char "=" then separatorBorder.data[it] = #char "=";
-        separatorBorder.data[separatorBorder.count-1] = #char "\n";
+        
         file_write(*LOG_FILE, separatorBorder);
         file_write(*LOG_FILE, separatorTimestamp);
         file_write(*LOG_FILE, separatorBorder);
-    } else {
-        assert(false, "Failed to create log file.");
     }
 
     free(filenameTimestamp.data);
@@ -88,7 +109,11 @@ make_log_file :: (programName : string, filenameFlags : Log_Filename_Flags = .FU
 }
 
 log :: (type : Log_Type, s: string, args: .. Any, callLoc := #caller_location) {
-    assert(!!LOG_FILE.handle);
+    #if OS == .ANDROID {
+	assert(!!LOG_FILE);
+    } else {
+	assert(!!LOG_FILE.handle);
+    }
     if type == .DEV && !IS_DEV then return;
 
     dt := to_calendar(current_time_consensus(), ifx TIMESTAMP_UTC then .UTC else .LOCAL);
@@ -112,27 +137,45 @@ log :: (type : Log_Type, s: string, args: .. Any, callLoc := #caller_location) {
             meridiem = "PM";
         }
     }
-
+    
     timestamp : string;
     if TIMESTAMP_INCL_DATE {
         timestamp = tprint("[%/%/% %:%:%.% %]", dt.year, formatInt(dt.month_starting_at_0 + 1, minimum_digits=2), formatInt(dt.day_of_month_starting_at_0 + 1, minimum_digits=2), formatInt(hour, minimum_digits=2), formatInt(dt.minute, minimum_digits=2), formatInt(dt.second, minimum_digits=2), formatInt(dt.millisecond, minimum_digits=3), meridiem);
     } else {
         timestamp = tprint("[%:%:%.% %]", formatInt(hour, minimum_digits=2), formatInt(dt.minute, minimum_digits=2), formatInt(dt.second, minimum_digits=2), formatInt(dt.millisecond, minimum_digits=3), meridiem);
     }
-
+    
     filename := path_filename(callLoc.fully_pathed_filename);
     logMsgString := tprint("% (%:%) %: %\n", timestamp, filename, callLoc.line_number, desig, tprint(s, ..args));
-    file_write(*LOG_FILE, logMsgString);
+    #if OS == .ANDROID {
+	SDL.write_io(LOG_FILE, logMsgString.data, cast(u32) logMsgString.count);
+    } else {
+	file_write(*LOG_FILE, logMsgString);
+    }
     if IS_DEV then print_color("%", logMsgString, color = get_colour_for_log_type(type));
 
     if type == .FATAL {
-	file_close(*LOG_FILE);
+	close_log_file();
 	assert(false);
     }
 }
 
+close_log_file :: () {
+    #if OS == .ANDROID {
+	SDL.close_io(LOG_FILE);
+    } else {
+	file_close(*LOG_FILE);
+    }
+}
+
 #scope_file
-LOG_FILE : File;
+#if OS == .ANDROID {
+    LogFile :: *SDL.IO_Stream;
+} else {
+    LogFile :: File;
+}
+LOG_FILE : LogFile;
+    
 TIMESTAMP_12HR      : bool;
 TIMESTAMP_UTC       : bool;
 TIMESTAMP_INCL_DATE : bool;
@@ -231,5 +274,6 @@ get_colour_for_log_type :: (type : Log_Type) -> Console_Color {
 #import "String";
 
 #if OS == .ANDROID {
-#import "Android";
+SDL :: #import "SDL3";
 }
+

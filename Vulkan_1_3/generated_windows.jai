@@ -7357,10 +7357,11 @@ VkBufferImageCopy :: struct {
     imageExtent:       VkExtent3D;
 }
 
-VkClearColorValue :: union {
+VkClearColorValue :: struct {
     _float32: [4] float;
-    int32:    [4] s32;
-    uint32:   [4] u32;
+
+    #overlay (_float32) int32:    [4] s32;
+    #overlay (_float32) uint32:   [4] u32;
 }
 
 VkClearDepthStencilValue :: struct {
@@ -7368,9 +7369,9 @@ VkClearDepthStencilValue :: struct {
     stencil: u32;
 }
 
-VkClearValue :: union {
+VkClearValue :: struct {
     color:        VkClearColorValue;
-    depthStencil: VkClearDepthStencilValue;
+    #overlay (color) depthStencil: VkClearDepthStencilValue;
 }
 
 VkClearAttachment :: struct {

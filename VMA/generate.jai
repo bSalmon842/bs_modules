@@ -51,7 +51,7 @@ compile_vma :: (os: Operating_System_Tag, cpu: CPU_Tag) -> bool {
             make_directory_if_it_does_not_exist("android");
             ndk := get_ndk_paths();
             target_triple := get_android_target_triple(cpu);
-            return build_cpp_dynamic_lib("android/libvma", VMA_PATH, target = .LINUX, extra = .["-I", VULKAN_PATHS.include, "-DVMA_IMPLEMENTATION", "-D__ANDROID_API__=21", "-x", "c++", "-std=c++14", "--sysroot", ndk.sysroot, "-L", tprint("%/usr/lib/%/%", ndk.sysroot, target_triple, ANDROID_SDK_LEVEL), "-target", target_triple, "-nostartfiles", "-fno-exceptions", "-fno-rtti", "-static-libstdc++"], compiler_executable_path=tprint("%/bin/clang++", ndk.toolchain));
+            return build_cpp_dynamic_lib("android/libvma", VMA_PATH, target = .LINUX, extra = .["-I", VULKAN_PATHS.include, "-DVMA_IMPLEMENTATION", "-DVMA_STATIC_VULKAN_FUNCTIONS=0", "-DVMA_DYNAMIC_VULKAN_FUNCTIONS=1", "-D__ANDROID_API__=21", "-x", "c++", "-std=c++14", "--sysroot", ndk.sysroot, "-L", tprint("%/usr/lib/%/%", ndk.sysroot, target_triple, ANDROID_SDK_LEVEL), "-target", target_triple, "-nostartfiles", "-fno-exceptions", "-fno-rtti", "-static-libstdc++"], compiler_executable_path=tprint("%/bin/clang++", ndk.toolchain));
 
         case .MACOS;
             make_directory_if_it_does_not_exist("macos");
@@ -110,7 +110,7 @@ generate_bindings :: (target_os: Operating_System_Tag, target_cpu: CPU_Tag) -> b
         will_print_bindings = () {
             // Change the library name to be the same on all platforms
             // so that we don't have to generate identical bindings for every platform just because the library name is different.
-            context.generator.libraries[0].name = "libvma";
+            context.generator.libraries[0].identifier = "libvma";
         };
         footer = VMA_FOOTER;
     }
@@ -132,7 +132,7 @@ VMA_FOOTER :: #string END
 }
 END
 
-#import "Toolchains/Android";
+#import "Android/Toolchain";
 #import "Basic";
 #import "Bindings_Generator";
 #import "BuildCpp";

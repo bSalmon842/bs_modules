@@ -95,10 +95,10 @@ backend_init :: (config: Sound_Player_Config) -> (Backend_Properties) {
     // See :AndroidRuntimeLinkErrors for a longer explanation, and some ideas about how we could improve these kinds of situations.
     // channel_mask := AAudioStream_getChannelMask(stream);
     channel_mask := AAUDIO_CHANNEL.INVALID;
-
+    
     // Only even try loading the proc on apis that will support it. Then any libdl failures are errors.
     GET_CHANNEL_MASK_API_LEVEL :: 32;
-    if android_app.activity.sdkVersion >= GET_CHANNEL_MASK_API_LEVEL {
+    if SDL.get_android_sdk_version() >= GET_CHANNEL_MASK_API_LEVEL {
         #import "POSIX";
 
         handle := dlopen("libaaudio.so", RTLD_LAZY);
@@ -112,7 +112,7 @@ backend_init :: (config: Sound_Player_Config) -> (Backend_Properties) {
             log_error("dlsym failed: %", to_string(dlerror()));
         }
     } else {
-        log("[aaudio] Device is on SDK %, we are unable to query the channel mask. SDK % is required for that.", android_app.activity.sdkVersion, GET_CHANNEL_MASK_API_LEVEL, flags = .WARNING);
+        log("[aaudio] Device is on SDK %, we are unable to query the channel mask. SDK % is required for that.", SDL.get_android_sdk_version(), GET_CHANNEL_MASK_API_LEVEL, flags = .WARNING);
     }
 
     log_verbose("[aaudio] Stream channel count == %, mask == %", channel_count, channel_mask);
@@ -332,19 +332,11 @@ backend_shutdown :: () {
 
 // Use the JNI to query for available devices. The device ids returned here can be used in AAudioStreamBuilder_setDeviceId.
 backend_get_devices :: () -> [] Output_Device {
-    #import "Android";
-    #import "Android/Jni"; // @Cleanup: Submodule!
-
-    assert(android_app != null && android_app.activity != null);
-    app := android_app;
-
     output_devices: [..] Output_Device;
-
+    
     // Get the JNIEnv associated with the thread we are being called on, creating one if necessary.
-    env: *JNIEnv;
-    vm := app.activity.vm;
-    vm.*.AttachCurrentThread(vm, *env, null);
-
+    env := cast(*JNIEnv) SDL.get_android_jni_env();
+    
     // NOTE(Charles): The NDK does not provide a way to query for devices, so we have to use the JNI to run java code.
     // Atm I am doing everything here in native code, which means we don't have to mess around incorporating java code
     // into the build process. However, it also means we have quite a lot of code, that doesn't do very much.
@@ -368,13 +360,13 @@ backend_get_devices :: () -> [] Output_Device {
     // @TODO: Cache the various classes and methods on first call, and only actually do the getDevices call on subsequent
     // calls. (Note that JNI_OnLoad might seem like a sensible place to do this, but it won't be called for how our program
     // code gets loaded. Ie our program is loaded in native code and not with the java System.loadLibrary.)
-
+    
     Context_ := env.*.FindClass(env, "android/content/Context");
     if !Context_ {
         log_error("Failed to FindClass the context. Returning no devices");
         return output_devices;
     }
-
+    
     getSystemService := env.*.GetMethodID(env, Context_, "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;");
     assert(getSystemService != null);
 
@@ -384,7 +376,7 @@ backend_get_devices :: () -> [] Output_Device {
     AUDIO_SERVICE := env.*.GetStaticObjectField(env, Context_, AUDIO_SERVICE_id);
     assert(AUDIO_SERVICE != null);
 
-    audio_manager := env.*.CallObjectMethod(env, app.activity.clazz, getSystemService, AUDIO_SERVICE);
+    audio_manager := env.*.CallObjectMethod(env, SDL.get_android_activity(), getSystemService, AUDIO_SERVICE);
     assert(audio_manager != null);
 
     AudioManager := env.*.FindClass(env, "android/media/AudioManager");
@@ -397,7 +389,6 @@ backend_get_devices :: () -> [] Output_Device {
     assert(devices != null);
 
     num_devices := env.*.GetArrayLength(env, devices);
-
     for 0..num_devices-1 {
         output_device := array_add(*output_devices);
 
@@ -518,6 +509,7 @@ frames_per_burst: s32;
 
 #import "Android"; // To check sdkLevel via android_app
 #import "Android/AAudio";
+SDL :: #import "SDL3";
 
 Basic :: #import "Basic";
 
