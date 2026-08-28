@@ -430,7 +430,7 @@ Audio_Device_Event :: struct
     type:      Event_Type;
     reserved:  u32;
     timestamp: u64;
-    which:     Audio_Device_ID;
+    which:     AudioDeviceID;
     recording: bool;
     padding1:  u8;
     padding2:  u8;

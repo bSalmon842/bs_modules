@@ -93,7 +93,7 @@ gltf_parse_string :: (gltf_buffer: string) -> GLTF_Data {
       for val: translation node.translation[it_index] = parse_float(val);
     }
 
-    node.local_transform = get_local_transform(*node);
+    node.local_transform = get_local_transform(node);
 
     children, has_children := get_array(node_parsed, "children");
     if has_children {
@@ -1525,7 +1525,7 @@ get :: (json_val     : JSON_Value,
   assert(json_val.type == .OBJECT);
 
   table := json_val.object;
-  val, success := table_find(table, key);
+  success, val := table_find(table, key);
 
   // Default value when value was not found.
   if !success {

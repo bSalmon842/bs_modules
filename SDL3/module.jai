@@ -35,6 +35,7 @@ set_main_ready :: () #foreign SDL3 "SDL_SetMainReady";
 #load "SDL_messagebox.jai";
 #load "SDL_system.jai";
 #load "SDL_dialog.jai";
+#load "SDL_hints.jai";
 
 #if OS == .ANDROID {
     #load "SDL_android.jai";

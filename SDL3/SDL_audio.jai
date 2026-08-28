@@ -42,11 +42,9 @@ AUDIO_ISUNSIGNED     :: (x: u32) -> bool #expand {return !AUDIO_ISSIGNED(x);}
 AUDIO_FRAMESIZE      :: (x: Audio_Spec) -> u32 #expand {return AUDIO_BYTESIZE(xx x.format * x.channels);}
 
 
-Audio_Device_ID :: enum_flags u32
-{
-    PLAYBACK  :: 0xFFFFFFFF;
-    RECORDING :: 0xFFFFFFFE;
-}
+AudioDeviceID :: u32;
+AUDIO_DEVICE_DEFAULT_PLAYBACK  : AudioDeviceID : 0xFFFFFFFF;
+AUDIO_DEVICE_DEFAULT_RECORDING : AudioDeviceID : 0xFFFFFFFE;
 
 Audio_Spec :: struct
 {
@@ -63,23 +61,23 @@ Audio_Postmix_Callback :: #type (userdata: *void, spec: Audio_Spec, buffer: *flo
 get_num_audio_drivers               :: () -> s32                                                                                                          #foreign SDL3 "SDL_GetNumAudioDrivers";
 get_audio_driver                    :: (index: s32) -> *u8                                                                                                #foreign SDL3 "SDL_GetAudioDriver";
 get_current_audio_driver            :: () -> *u8                                                                                                          #foreign SDL3 "SDL_GetCurrentAudioDriver";
-get_audio_playback_devices          :: (count: *s32) -> *Audio_Device_ID                                                                                  #foreign SDL3 "SDL_GetAudioPlaybackDevices";
-get_audio_recording_devices         :: (count: *s32) -> *Audio_Device_ID                                                                                  #foreign SDL3 "SDL_GetAudioRecordingDevices";
-get_audio_device_name               :: (dev_id: Audio_Device_ID) -> *u8                                                                                   #foreign SDL3 "SDL_GetAudioDeviceName";
-get_audio_device_format             :: (dev_id: Audio_Device_ID, spec: *Audio_Spec, sample_frames: *s32) -> bool                                          #foreign SDL3 "SDL_GetAudioDeviceFormat";
-get_audio_device_channel_map        :: (dev_id: Audio_Device_ID, count: *s32) -> *s32                                                                     #foreign SDL3 "SDL_GetAudioDeviceChannelMap";
-open_audio_device                   :: (dev_id: Audio_Device_ID, spec: *Audio_Spec) -> Audio_Device_ID                                                    #foreign SDL3 "SDL_OpenAudioDevice";
-pause_audio_device                  :: (dev_id: Audio_Device_ID) -> bool                                                                                  #foreign SDL3 "SDL_PauseAudioDevice";
-resume_audio_device                 :: (dev_id: Audio_Device_ID) -> bool                                                                                  #foreign SDL3 "SDL_ResumeAudioDevice";
-audio_device_paused                 :: (dev_id: Audio_Device_ID) -> bool                                                                                  #foreign SDL3 "SDL_AudioDevicePaused";
-get_audio_device_gain               :: (dev_id: Audio_Device_ID) -> float32                                                                               #foreign SDL3 "SDL_GetAudioDeviceGain";
-set_audio_device_gain               :: (dev_id: Audio_Device_ID, gain: float32) -> bool                                                                   #foreign SDL3 "SDL_SetAudioDeviceGain";
-close_audio_device                  :: (dev_id: Audio_Device_ID)                                                                                          #foreign SDL3 "SDL_CloseAudioDevice";
-bind_audio_streams                  :: (dev_id: Audio_Device_ID, streams: **Audio_Stream, num_streams: s32) -> bool                                       #foreign SDL3 "SDL_BindAudioStreams";
-bind_audio_stream                   :: (dev_id: Audio_Device_ID, stream: *Audio_Stream) -> bool                                                           #foreign SDL3 "SDL_BindAudioStream";
+get_audio_playback_devices          :: (count: *s32) -> *AudioDeviceID                                                                                  #foreign SDL3 "SDL_GetAudioPlaybackDevices";
+get_audio_recording_devices         :: (count: *s32) -> *AudioDeviceID                                                                                  #foreign SDL3 "SDL_GetAudioRecordingDevices";
+get_audio_device_name               :: (dev_id: AudioDeviceID) -> *u8                                                                                   #foreign SDL3 "SDL_GetAudioDeviceName";
+get_audio_device_format             :: (dev_id: AudioDeviceID, spec: *Audio_Spec, sample_frames: *s32) -> bool                                          #foreign SDL3 "SDL_GetAudioDeviceFormat";
+get_audio_device_channel_map        :: (dev_id: AudioDeviceID, count: *s32) -> *s32                                                                     #foreign SDL3 "SDL_GetAudioDeviceChannelMap";
+open_audio_device                   :: (dev_id: AudioDeviceID, spec: *Audio_Spec) -> AudioDeviceID                                                    #foreign SDL3 "SDL_OpenAudioDevice";
+pause_audio_device                  :: (dev_id: AudioDeviceID) -> bool                                                                                  #foreign SDL3 "SDL_PauseAudioDevice";
+resume_audio_device                 :: (dev_id: AudioDeviceID) -> bool                                                                                  #foreign SDL3 "SDL_ResumeAudioDevice";
+audio_device_paused                 :: (dev_id: AudioDeviceID) -> bool                                                                                  #foreign SDL3 "SDL_AudioDevicePaused";
+get_audio_device_gain               :: (dev_id: AudioDeviceID) -> float32                                                                               #foreign SDL3 "SDL_GetAudioDeviceGain";
+set_audio_device_gain               :: (dev_id: AudioDeviceID, gain: float32) -> bool                                                                   #foreign SDL3 "SDL_SetAudioDeviceGain";
+close_audio_device                  :: (dev_id: AudioDeviceID)                                                                                          #foreign SDL3 "SDL_CloseAudioDevice";
+bind_audio_streams                  :: (dev_id: AudioDeviceID, streams: **Audio_Stream, num_streams: s32) -> bool                                       #foreign SDL3 "SDL_BindAudioStreams";
+bind_audio_stream                   :: (dev_id: AudioDeviceID, stream: *Audio_Stream) -> bool                                                           #foreign SDL3 "SDL_BindAudioStream";
 unbind_audio_streams                :: (streams: **Audio_Stream, num_streams: s32)                                                                        #foreign SDL3 "SDL_UnbindAudioStreams";
 unbind_audio_stream                 :: (stream: *Audio_Stream)                                                                                            #foreign SDL3 "SDL_UnbindAudioStream";
-get_audio_stream_device             :: (stream: *Audio_Stream) -> Audio_Device_ID                                                                         #foreign SDL3 "SDL_GetAudioStreamDevice";
+get_audio_stream_device             :: (stream: *Audio_Stream) -> AudioDeviceID                                                                         #foreign SDL3 "SDL_GetAudioStreamDevice";
 create_audio_stream                 :: (src_spec: *Audio_Spec, dst_spec: *Audio_Spec) -> *Audio_Stream                                                    #foreign SDL3 "SDL_CreateAudioStream";
 get_audio_stream_properties         :: (stream: *Audio_Stream) -> Properties_ID                                                                           #foreign SDL3 "SDL_GetAudioStreamProperties";
 get_audio_stream_format             :: (stream: *Audio_Stream, src_spec: *Audio_Spec, dst_spec: *Audio_Spec) -> bool                                      #foreign SDL3 "SDL_GetAudioStreamFormat";
@@ -105,11 +103,23 @@ unlock_audio_stream                 :: (stream: *Audio_Stream) -> bool          
 set_audio_stream_get_callback       :: (stream: *Audio_Stream, callback: Audio_Stream_Callback, userdata: *void) -> bool                                  #foreign SDL3 "SDL_SetAudioStreamGetCallback";
 set_audio_stream_put_callback       :: (stream: *Audio_Stream, callback: Audio_Stream_Callback, userdata: *void) -> bool                                  #foreign SDL3 "SDL_SetAudioStreamPutCallback";
 destroy_audio_stream                :: (stream: *Audio_Stream)                                                                                            #foreign SDL3 "SDL_DestroyAudioStream";
-open_audio_device_stream            :: (dev_id: Audio_Device_ID, spec: *Audio_Spec, callback: Audio_Stream_Callback, userdata: *void) -> *Audio_Stream    #foreign SDL3 "SDL_OpenAudioDeviceStream";
-set_audio_postmix_callback          :: (dev_id: Audio_Device_ID, callback: Audio_Postmix_Callback, userdata: *void) -> bool                               #foreign SDL3 "SDL_SetAudioPostmixCallback";
+open_audio_device_stream            :: (dev_id: AudioDeviceID, spec: *Audio_Spec, callback: Audio_Stream_Callback, userdata: *void) -> *Audio_Stream    #foreign SDL3 "SDL_OpenAudioDeviceStream";
+set_audio_postmix_callback          :: (dev_id: AudioDeviceID, callback: Audio_Postmix_Callback, userdata: *void) -> bool                               #foreign SDL3 "SDL_SetAudioPostmixCallback";
 load_wav_io                         :: (src: *IO_Stream, close_io: bool, spec: *Audio_Spec, audio_buf: **u8, audio_len: *u32) -> bool                     #foreign SDL3 "SDL_LoadWAV_IO";
 load_wav                            :: (path: *u8, spec: *Audio_Spec, audio_buf: **u8, audio_len: *u32) -> bool                                           #foreign SDL3 "SDL_LoadWAV";
 mix_audio                           :: (dst: *u8, src: *u8, format: Audio_Format, len: u32, volume: float32) -> bool                                      #foreign SDL3 "SDL_MixAudio";
 convert_audio_samples               :: (src_spec: *Audio_Spec, src_data: *u8, src_len: s32, dst_spec: *Audio_Spec, dst_data: **u8, dst_len: *s32) -> bool #foreign SDL3 "SDL_ConvertAudioSamples";
 get_audio_format_name               :: (format: Audio_Format) -> *u8                                                                                      #foreign SDL3 "SDL_GetAudioFormatName";
 get_silence_value_for_format        :: (format: Audio_Format) -> s32                                                                                      #foreign SDL3 "SDL_GetSilenceValueForFormat";
+
+get_audio_device_name_str :: (device : AudioDeviceID) -> string #expand {
+    return to_string(get_audio_device_name(device));
+}
+
+get_audio_playback_devices :: () -> [] AudioDeviceID, bool {
+    deviceCount : s32;
+    deviceData := get_audio_playback_devices(*deviceCount);
+    if !deviceData || deviceCount == 0 then return .[], false;
+    
+    return .{ deviceCount, deviceData }, true;
+}
