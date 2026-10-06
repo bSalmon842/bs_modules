@@ -4493,7 +4493,7 @@ ImplSDL3_SetMouseCaptureMode :: (mode: ImplSDL3_MouseCaptureMode) -> void #forei
 #import "Vulkan_1_3";
 
 #if OS == .WINDOWS {
-    #import "Windows";
+    //#import "Windows";
     imgui :: #library,no_dll "windows/ImGui";
 }
 #if OS == .MACOS    imgui :: #library "macos/ImGui";
